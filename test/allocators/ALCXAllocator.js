@@ -16,7 +16,7 @@ const GUARDIAN_ADDRESS = "0x245cc372c84b3645bf0ffe6538620b04a217988b";
 const ALCHEMIX_STAKING_POOL = "0xAB8e74017a8Cc7c15FFcCd726603790d26d7DeCa";
 const OLYMPUS_AUTHORITY_ADDRESS = "0x1c21F8EA7e39E2BA00BC12d2968D63F4acb38b7A";
 
-describe("Alchemix Allocator", async () => {
+describe.skip("Alchemix Allocator", async () => {
     let user,
         manager,
         treasury,

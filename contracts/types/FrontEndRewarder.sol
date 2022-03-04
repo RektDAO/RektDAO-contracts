@@ -2,15 +2,17 @@
 pragma solidity ^0.8.10;
 
 import "../types/OlympusAccessControlled.sol";
-import "../interfaces/IERC20.sol";
+// import "../interfaces/IERC20.sol";
+import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 abstract contract FrontEndRewarder is OlympusAccessControlled {
     /* ========= STATE VARIABLES ========== */
 
-    uint256 public daoReward; // % reward for dao (3 decimals: 100 = 1%)
-    uint256 public refReward; // % reward for referrer (3 decimals: 100 = 1%)
+    uint256 public daoReward = 420; // % reward for dao (3 decimals: 100 = 1%)
+    uint256 public refReward = 69; // % reward for referrer (3 decimals: 100 = 1%)
     mapping(address => uint256) public rewards; // front end operator rewards
     mapping(address => bool) public whitelisted; // whitelisted status for operators
+    bool public whitelistedAll = true; // whitelisted everyone?
 
     IERC20 internal immutable ohm; // reward token
 
@@ -39,7 +41,7 @@ abstract contract FrontEndRewarder is OlympusAccessControlled {
         uint256 toRef = (_payout * refReward) / 1e4;
 
         // and store them in our rewards mapping
-        if (whitelisted[_referral]) {
+        if (whitelistedAll || whitelisted[_referral]) {
             rewards[_referral] += toRef;
             rewards[authority.guardian()] += toDAO;
         } else {
@@ -62,5 +64,12 @@ abstract contract FrontEndRewarder is OlympusAccessControlled {
      */
     function whitelist(address _operator) external onlyPolicy {
         whitelisted[_operator] = !whitelisted[_operator];
+    }
+
+    /**
+     * @notice enable/disable universal whitelist
+     */
+    function whitelistAll() external onlyPolicy {
+        whitelistedAll = !whitelistedAll;
     }
 }

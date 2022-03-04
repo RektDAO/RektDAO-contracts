@@ -15,7 +15,7 @@ import {
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 //const { FakeContract, smock } = require("@defi-wonderland/smock");
 
-describe("YieldDirector", async () => {
+describe.skip("YieldDirector", async () => {
     const LARGE_APPROVAL = "100000000000000000000000000000000";
     const ZERO_ADDRESS = "0x0000000000000000000000000000000000000000";
     // Initial mint for Frax and DAI (10,000,000)

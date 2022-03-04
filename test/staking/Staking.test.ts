@@ -5,9 +5,9 @@ const { BigNumber } = ethers;
 import { FakeContract, smock } from "@defi-wonderland/smock";
 import {
     IDistributor,
-    IgOHM,
-    IsOHM,
-    IOHM,
+    IOpenGOHM,
+    IOpenSOHM,
+    IOpenOHM,
     OlympusStaking,
     OlympusStaking__factory,
     OlympusAuthority,
@@ -25,9 +25,9 @@ describe("OlympusStaking", () => {
     let alice: SignerWithAddress;
     let bob: SignerWithAddress;
     let other: SignerWithAddress;
-    let ohmFake: FakeContract<IOHM>;
-    let sOHMFake: FakeContract<IsOHM>;
-    let gOHMFake: FakeContract<IgOHM>;
+    let ohmFake: FakeContract<IOpenOHM>;
+    let sOHMFake: FakeContract<IOpenSOHM>;
+    let gOHMFake: FakeContract<IOpenGOHM>;
     let distributorFake: FakeContract<IDistributor>;
     let staking: OlympusStaking;
     let authority: OlympusAuthority;
@@ -38,10 +38,9 @@ describe("OlympusStaking", () => {
 
     beforeEach(async () => {
         [owner, governor, guardian, alice, bob, other] = await ethers.getSigners();
-        ohmFake = await smock.fake<IOHM>("IOHM");
-        gOHMFake = await smock.fake<IgOHM>("IgOHM");
-        // need to be specific because IsOHM is also defined in OLD
-        sOHMFake = await smock.fake<IsOHM>("contracts/interfaces/IsOHM.sol:IsOHM");
+        ohmFake = await smock.fake<IOpenOHM>("IOpenOHM");
+        gOHMFake = await smock.fake<IOpenGOHM>("IOpenGOHM");
+        sOHMFake = await smock.fake<IOpenSOHM>("IOpenSOHM");
         distributorFake = await smock.fake<IDistributor>("IDistributor");
         authority = await new OlympusAuthority__factory(owner).deploy(
             governor.address,
@@ -212,7 +211,7 @@ describe("OlympusStaking", () => {
                 expect(warmupInfo.lock).to.equal(false);
             });
 
-            it("exchanges OHM for sOHM when claim is true and rebasing is true", async () => {
+            it("exchanges OHM for sOHM when rebasing is true and claim is true", async () => {
                 const amount = 1000;
                 const rebasing = true;
                 const claim = true;
@@ -229,7 +228,7 @@ describe("OlympusStaking", () => {
                 expect(await staking.supplyInWarmup()).to.equal(0);
             });
 
-            it("exchanges OHM for newly minted gOHM when claim is true and rebasing is true", async () => {
+            it("exchanges OHM for newly minted gOHM when rebasing is false and claim is true", async () => {
                 const amount = 1000;
                 const indexedAmount = 10000;
                 const rebasing = false;
@@ -304,6 +303,8 @@ describe("OlympusStaking", () => {
 
                 await staking.connect(alice).stake(alice.address, amount, rebasing, claim);
 
+                const warmupInfo = await staking.warmupInfo(alice.address);
+                console.log(warmupInfo);
                 expect(await staking.supplyInWarmup()).to.equal(amount);
             });
         });

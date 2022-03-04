@@ -9,7 +9,7 @@ const old_sohm_abi = require("../../abis/sohm");
 const { treasury_tokens, olympus_tokens, olympus_lp_tokens, swaps } = require("./tokens");
 const { addresses } = require("./config");
 
-const EPOCH_LEGNTH = 2200;
+const EPOCH_LENGTH = 2200;
 const DAI_ADDRESS = addresses.DAI;
 const SUSHI_ROUTER = addresses.SUSHI_ROUTER;
 const UNISWAP_ROUTER = addresses.UNISWAP_ROUTER;
@@ -99,7 +99,7 @@ describe.skip("Treasury Token Migration", async function () {
             ohm.address,
             sOhm.address,
             gOhm.address,
-            EPOCH_LEGNTH,
+            EPOCH_LENGTH,
             0,
             0,
             authority.address

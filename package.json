@@ -52,17 +52,27 @@
     "clean": "hardhat clean",
     "void:deploy": "hardhat deploy",
     "test": "hardhat test",
+    "test:fast": "TS_NODE_TRANSPILE_ONLY=true hardhat test",
+    "reinstall": "yarn install --immutable --immutable-cache --check-cache",
     "gas": "REPORT_GAS=true hardhat test",
     "coverage": "HARDHAT_DEPLOY_FIXTURE=true hardhat coverage",
     "typechain": "TS_NODE_TRANSPILE_ONLY=true hardhat typechain",
     "fork": "hardhat node",
+    "fork:fixed": "hardhat node --network hardhat --hostname 127.0.0.1",
+    "fork:localhost": "hardhat node --network localhost --hostname 127.0.0.1",
     "deploy:mainnet": "hardhat --network mainnet deploy",
+    "deploy:goerli": "hardhat --network goerli deploy",
     "deploy:rinkeby": "hardhat --network rinkeby deploy",
     "deploy:ropsten": "hardhat --network ropsten deploy",
     "deploy:hardhat": "hardhat --network hardhat deploy",
+    "deploy:localhost": "hardhat --network localhost deploy",
+    "deploy:testnet": "hardhat --network localhost deploy --tags testnet",
+    "deploy:bondDepo": "hardhat --network localhost deploy --tags OlympusBondDepositoryV2",
     "sourcify:mainnet": "hardhat --network mainnet sourcify",
+    "sourcify:goerli": "hardhat --network goerli sourcify",
     "sourcify:rinkeby": "hardhat --network rinkeby sourcify",
     "etherscan:mainnet": "hardhat --network mainnet etherscan-verify",
+    "etherscan:goerli": "hardhat --network goerli etherscan-verify",
     "etherscan:rinkeby": "hardhat --network rinkeby etherscan-verify",
     "prestart": "yarn run typechain",
     "start": "hardhat node --network hardhat"
@@ -75,5 +85,8 @@
   "bugs": {
     "url": "https://github.com/OlympusDAO/olympus-contracts/issues"
   },
-  "homepage": "https://github.com/OlympusDAO/olympus-contracts#readme"
+  "homepage": "https://github.com/OlympusDAO/olympus-contracts#readme",
+  "dependencies": {
+    "@gnosis.pm/safe-contracts": "^1.3.0"
+  }
 }

@@ -1,14 +1,18 @@
 // SPDX-License-Identifier: AGPL-3.0
-pragma solidity ^0.7.5;
+pragma solidity >=0.7.5;
 
-import "./libraries/SafeMath.sol";
-import "./libraries/SafeERC20.sol";
+// import "./libraries/SafeMath.sol";
+import "@openzeppelin/contracts/utils/math/SafeMath.sol";
+// import "./libraries/SafeERC20.sol";
+import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 
 import "./interfaces/IOwnable.sol";
-import "./interfaces/IERC20.sol";
-import "./interfaces/IERC20Metadata.sol";
-import "./interfaces/IOHM.sol";
-import "./interfaces/IsOHM.sol";
+// import "./interfaces/IERC20.sol";
+import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+// import "./interfaces/IERC20Metadata.sol";
+import "@openzeppelin/contracts/interfaces/IERC20Metadata.sol";
+import "./interfaces/IOpenOHM.sol";
+import "./interfaces/IOpenSOHM.sol";
 import "./interfaces/IBondingCalculator.sol";
 import "./interfaces/ITreasury.sol";
 
@@ -59,8 +63,8 @@ contract OlympusTreasury is OlympusAccessControlled, ITreasury {
 
     /* ========== STATE VARIABLES ========== */
 
-    IOHM public immutable OHM;
-    IsOHM public sOHM;
+    IOpenOHM public immutable OHM;
+    IOpenSOHM public sOHM;
 
     mapping(STATUS => address[]) public registry;
     mapping(STATUS => mapping(address => bool)) public permissions;
@@ -93,7 +97,7 @@ contract OlympusTreasury is OlympusAccessControlled, ITreasury {
         address _authority
     ) OlympusAccessControlled(IOlympusAuthority(_authority)) {
         require(_ohm != address(0), "Zero address: OHM");
-        OHM = IOHM(_ohm);
+        OHM = IOpenOHM(_ohm);
 
         timelockEnabled = false;
         initialized = false;
@@ -132,6 +136,31 @@ contract OlympusTreasury is OlympusAccessControlled, ITreasury {
         totalReserves = totalReserves.add(value);
 
         emit Deposit(_token, _amount, value);
+    }
+
+    /**
+     * @notice allow bond depo to auto-deposit an asset deposited to it
+     * @param _amount uint256
+     * @param _token address
+     * @return value_ uint256
+     */
+    function deposited(
+        uint256 _amount,
+        address _token
+    ) external override returns (uint256 value_) {
+        if (permissions[STATUS.RESERVETOKEN][_token]) {
+            require(permissions[STATUS.RESERVEDEPOSITOR][msg.sender], notApproved);
+        } else if (permissions[STATUS.LIQUIDITYTOKEN][_token]) {
+            require(permissions[STATUS.LIQUIDITYDEPOSITOR][msg.sender], notApproved);
+        } else {
+            return 0; // don't add to reserves but don't revert
+        }
+
+        value_ = tokenValue(_token, _amount);
+
+        totalReserves = totalReserves.add(value_);
+
+        emit Deposit(_token, _amount, value_);
     }
 
     /**
@@ -304,13 +333,44 @@ contract OlympusTreasury is OlympusAccessControlled, ITreasury {
         address _address,
         address _calculator
     ) external onlyGovernor {
+        _enable(_status, _address, _calculator);
+    }
+
+    /**
+     * @notice enable permissions for multiple statuses on multiple addresses
+     * @param _status STATUS
+     * @param _address address
+     */
+    function enableMulti(
+        STATUS[] calldata _status,
+        address[] calldata _address
+    ) external onlyGovernor {
+        for (uint256 i = 0; i < _status.length; i++) {
+            for (uint256 j = 0; j < _address.length; j++) {
+                _enable(_status[i], _address[j], address(0));
+            }
+        }
+    }
+
+    /**
+     * @notice enable permission from queue
+     * @param _status STATUS
+     * @param _address address
+     * @param _calculator address
+     */
+    function _enable(
+        STATUS _status,
+        address _address,
+        address _calculator
+    ) internal {
         require(timelockEnabled == false, "Use queueTimelock");
         if (_status == STATUS.SOHM) {
-            sOHM = IsOHM(_address);
+            sOHM = IOpenSOHM(_address);
         } else {
             permissions[_status][_address] = true;
 
             if (_status == STATUS.LIQUIDITYTOKEN) {
+                require(_calculator != address(0), "Zero address: bondCalculator");
                 bondCalculator[_address] = _calculator;
             }
 
@@ -404,7 +464,7 @@ contract OlympusTreasury is OlympusAccessControlled, ITreasury {
 
         if (info.managing == STATUS.SOHM) {
             // 9
-            sOHM = IsOHM(info.toPermit);
+            sOHM = IOpenSOHM(info.toPermit);
         } else {
             permissions[info.managing][info.toPermit] = true;
 
@@ -447,6 +507,7 @@ contract OlympusTreasury is OlympusAccessControlled, ITreasury {
         require(timelockEnabled == true, "timelock already disabled");
         if (onChainGovernanceTimelock != 0 && onChainGovernanceTimelock <= block.number) {
             timelockEnabled = false;
+            onChainGovernanceTimelock = 0; // reset
         } else {
             onChainGovernanceTimelock = block.number.add(blocksNeededForQueue.mul(7)); // 7-day timelock
         }

@@ -108,6 +108,7 @@ describe("Treasury", async () => {
         distributor = await distributorFactory.deploy(
             treasury.address,
             ohm.address,
+            sOhm.address,
             staking.address,
             auth.address
         );

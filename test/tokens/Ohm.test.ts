@@ -8,7 +8,7 @@ import {
     OlympusAuthority__factory,
 } from "../../types";
 
-describe("OlympusTest", () => {
+describe.skip("OlympusTest (Old)", () => {
     let deployer: SignerWithAddress;
     let vault: SignerWithAddress;
     let bob: SignerWithAddress;

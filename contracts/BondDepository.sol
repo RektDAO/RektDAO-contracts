@@ -3,9 +3,11 @@ pragma solidity ^0.8.10;
 
 import "./types/NoteKeeper.sol";
 
-import "./libraries/SafeERC20.sol";
+// import "./libraries/SafeERC20.sol";
+import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 
-import "./interfaces/IERC20Metadata.sol";
+// import "./interfaces/IERC20Metadata.sol";
+import "@openzeppelin/contracts/interfaces/IERC20Metadata.sol";
 import "./interfaces/IBondDepository.sol";
 
 /// @title Olympus Bond Depository V2
@@ -40,7 +42,7 @@ contract OlympusBondDepositoryV2 is IBondDepository, NoteKeeper {
     constructor(
         IOlympusAuthority _authority,
         IERC20 _ohm,
-        IgOHM _gohm,
+        IOpenGOHM _gohm,
         IStaking _staking,
         ITreasury _treasury
     ) NoteKeeper(_authority, _ohm, _gohm, _staking, _treasury) {
@@ -146,6 +148,10 @@ contract OlympusBondDepositoryV2 is IBondDepository, NoteKeeper {
 
         emit Bond(_id, _amount, price);
 
+        // transfer payment to treasury; do this before addNote calls treasury.mint, which checks excessReserves
+        market.quoteToken.safeTransferFrom(msg.sender, address(treasury), _amount);
+        /*uint256 depositedReserves =*/ treasury.deposited(_amount, address(market.quoteToken));
+
         /**
          * user data is stored as Notes. these are isolated array entries
          * storing the amount due, the time created, the time when payout
@@ -154,19 +160,80 @@ contract OlympusBondDepositoryV2 is IBondDepository, NoteKeeper {
          */
         index_ = addNote(_user, payout_, uint48(expiry_), uint48(_id), _referral);
 
-        // transfer payment to treasury
-        market.quoteToken.safeTransferFrom(msg.sender, address(treasury), _amount);
-
         // if max debt is breached, the market is closed
         // this a circuit breaker
         if (term.maxDebt < market.totalDebt) {
-            market.capacity = 0;
-            emit CloseMarket(_id);
+            _close(_id);
         } else {
             // if market will continue, the control variable is tuned to hit targets on time
             _tune(_id, currentTime);
         }
     }
+
+    /* ======== WITHDRAW (INVERSE BOND) ======== */
+
+    /**
+     * @notice             deposit OHM in exchange for quote tokens from a specified market
+     * @param _id          the ID of the market
+     * @param _amount      the amount of OHM to sell
+     * @param _minPrice    the minimum price at which to sell
+     * @param _user        the recipient of the payout
+     * @return payout_     the amount of quote tokens withdrawn
+     */
+    // function withdraw(
+    //     uint256 _id,
+    //     uint256 _amount,
+    //     uint256 _minPrice,
+    //     address _user
+    // )
+    //     external
+    //     returns (
+    //         uint256 payout_
+    //     )
+    // {
+    //     require(false, "Depository: withdraw not yet available");
+    //     Market storage market = markets[_id];
+    //     Terms memory term = terms[_id];
+    //     uint48 currentTime = uint48(block.timestamp);
+
+    //     // Markets end at a defined timestamp
+    //     // |-------------------------------------| t
+    //     require(currentTime < term.conclusion, "Depository: market concluded");
+
+    //     // Debt and the control variable decay over time
+    //     _decay(_id, currentTime);
+
+    //     // Users input a minimum price, which protects them from price changes after
+    //     // entering the mempool. min price is a slippage mitigation measure
+    //     uint256 price = _marketPriceInverseOffer(_id);
+    //     require(price >= _minPrice, "Depository: less than min price");
+
+    //     /**
+    //      * payout for the deposit = amount / price
+    //      *
+    //      * where
+    //      * payout = OHM out
+    //      * amount = quote tokens in
+    //      * price = quote tokens : ohm (i.e. 42069 DAI : OHM)
+    //      *
+    //      * 1e18 = OHM decimals (9) + price decimals (9)
+    //      */
+    //     payout_ = ((_amount * 1e18) / price) / (10**metadata[_id].quoteDecimals);
+
+    //     // markets have a max payout amount, capping size because deposits
+    //     // do not experience slippage. max payout is recalculated upon tuning
+    //     require(payout_ <= market.maxPayout, "Depository: max size exceeded");
+
+    //     /*
+    //      * burn, withdraw, transfer
+    //      */
+    //     // need a new version of treasury.withdraw() that uses passed-in tokenValue
+    //     // it also does OHM.burnFrom(msg.sender, _amount)
+    //     treasury.withdraw(_payout, address(market.quoteToken));
+    //     IERC20(address(market.quoteToken)).safeTransfer(msg.sender, _amount);
+
+    //     // finish up: TBD
+    // }
 
     /**
      * @notice             decay debt, and adjust control variable if there is an active change
@@ -302,7 +369,8 @@ contract OlympusBondDepositoryV2 is IBondDepository, NoteKeeper {
          * interval. for example, if capacity is 1,000 OHM, there are 10 days to conclusion,
          * and the preferred deposit interval is 1 day, max payout would be 100 OHM.
          */
-        uint64 maxPayout = uint64((targetDebt * _intervals[0]) / secondsToConclusion);
+        // note: changed OOO to increase bond capacity
+        uint64 maxPayout = uint64(targetDebt / secondsToConclusion * _intervals[0]);
 
         /*
          * max debt serves as a circuit breaker for the market. let's say the quote
@@ -371,9 +439,7 @@ contract OlympusBondDepositoryV2 is IBondDepository, NoteKeeper {
      * @param _id          ID of market to close
      */
     function close(uint256 _id) external override onlyPolicy {
-        terms[_id].conclusion = uint48(block.timestamp);
-        markets[_id].capacity = 0;
-        emit CloseMarket(_id);
+        _close(_id);
     }
 
     /* ======== EXTERNAL VIEW ======== */
@@ -522,6 +588,16 @@ contract OlympusBondDepositoryV2 is IBondDepository, NoteKeeper {
     /* ======== INTERNAL VIEW ======== */
 
     /**
+     * @notice             disable existing market
+     * @param _id          ID of market to close
+     */
+    function _close(uint256 _id) internal {
+        terms[_id].conclusion = uint48(block.timestamp);
+        markets[_id].capacity = 0;
+        emit CloseMarket(_id);
+    }
+
+    /**
      * @notice                  calculate current market price of quote token in base token
      * @dev                     see marketPrice() for explanation of price computation
      * @dev                     uses info from storage because data has been updated before call (vs marketPrice())
@@ -530,6 +606,24 @@ contract OlympusBondDepositoryV2 is IBondDepository, NoteKeeper {
      */
     function _marketPrice(uint256 _id) internal view returns (uint256) {
         return (terms[_id].controlVariable * _debtRatio(_id)) / (10**metadata[_id].quoteDecimals);
+    }
+
+    /**
+     * @notice                  calculate current market price of BASE token in QUOTE token
+     * @param _id               market ID
+     * @return                  price for OHM in market decimals
+     */
+    function _marketPriceInverse(uint256 _id) internal view returns (uint256) {
+        return (10**metadata[_id].quoteDecimals) / (terms[_id].controlVariable * _debtRatio(_id));
+    }
+
+    /**
+     * @notice                  calculate current OFFER price of BASE token in QUOTE token
+     * @param _id               market ID
+     * @return                  offer price for OHM in market decimals
+     */
+    function _marketPriceInverseOffer(uint256 _id) internal view returns (uint256) {
+        return _marketPriceInverse(_id) * 9e17 / 1e18; // 9e17 / 1e18 == 0.9
     }
 
     /**
