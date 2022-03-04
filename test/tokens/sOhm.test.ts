@@ -15,9 +15,8 @@ import {
 } from "../../types";
 
 const TOTAL_GONS = 5000000000000000;
-const ZERO_ADDRESS = ethers.utils.getAddress("0x0000000000000000000000000000000000000000");
 
-describe("sOhm", () => {
+describe.skip("sOhm (Old)", () => {
     let initializer: SignerWithAddress;
     let alice: SignerWithAddress;
     let bob: SignerWithAddress;
@@ -77,7 +76,7 @@ describe("sOhm", () => {
             });
 
             it("won't set gOhmFake to 0 address", async () => {
-                await expect(sOhm.connect(initializer).setgOHM(ZERO_ADDRESS)).to.be.reverted;
+                await expect(sOhm.connect(initializer).setgOHM(ethers.constants.AddressZero)).to.be.reverted;
             });
         });
 
@@ -94,7 +93,7 @@ describe("sOhm", () => {
                     sOhm.connect(initializer).initialize(stakingFake.address, treasuryFake.address)
                 )
                     .to.emit(sOhm, "Transfer")
-                    .withArgs(ZERO_ADDRESS, stakingFake.address, TOTAL_GONS);
+                    .withArgs(ethers.constants.AddressZero, stakingFake.address, TOTAL_GONS);
             });
 
             it("emits LogStakingContractUpdated event", async () => {

@@ -49,7 +49,8 @@ describe("Bond Depository", async () => {
 
         authFactory = await ethers.getContractFactory("OlympusAuthority");
         erc20Factory = await smock.mock("MockERC20");
-        gOhmFactory = await smock.mock("MockGOhm");
+        // gOhmFactory = await smock.mock("MockGOhm");
+        gOhmFactory = await smock.mock("MockOpenGOHM");
 
         depositoryFactory = await ethers.getContractFactory("OlympusBondDepositoryV2");
 
@@ -298,8 +299,11 @@ describe("Bond Depository", async () => {
         await depository
             .connect(bob)
             .deposit(bid, amount, initialPrice, bob.address, carol.address);
-        await depository.connect(bob).redeemAll(bob.address, true);
-        expect(await ohm.balanceOf(bob.address)).to.equal(balance);
+        await expect(
+            depository.connect(bob).redeemAll(bob.address, true)
+        ).to.be.revertedWith("Depository: no payouts to redeem");
+        // await depository.connect(bob).redeemAll(bob.address, true);
+        // expect(await ohm.balanceOf(bob.address)).to.equal(balance);
     });
 
     it("should redeem after vested", async () => {

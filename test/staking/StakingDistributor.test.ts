@@ -4,6 +4,7 @@ import { ethers } from "hardhat";
 import { FakeContract, smock } from "@defi-wonderland/smock";
 import {
     ITreasury,
+    IsOHM,
     IOHM,
     Distributor__factory,
     Distributor,
@@ -22,6 +23,7 @@ describe("Distributor", () => {
     let guardian: SignerWithAddress;
     let other: SignerWithAddress;
     let ohmFake: FakeContract<IOHM>;
+    let sOHMFake: FakeContract<IsOHM>;
     let treasuryFake: FakeContract<ITreasury>;
     let distributor: Distributor;
     let authority: OlympusAuthority;
@@ -30,6 +32,7 @@ describe("Distributor", () => {
         [owner, staking, governor, guardian, other] = await ethers.getSigners();
         treasuryFake = await smock.fake<ITreasury>("ITreasury");
         ohmFake = await smock.fake<IOHM>("IOHM");
+        sOHMFake = await smock.fake<IsOHM>("contracts/interfaces/IsOHM.sol:IsOHM");
         authority = await new OlympusAuthority__factory(owner).deploy(
             governor.address,
             guardian.address,
@@ -43,6 +46,7 @@ describe("Distributor", () => {
             const distributor = await new Distributor__factory(owner).deploy(
                 treasuryFake.address,
                 ohmFake.address,
+                sOHMFake.address,
                 staking.address,
                 authority.address
             );
@@ -53,6 +57,7 @@ describe("Distributor", () => {
                 new Distributor__factory(owner).deploy(
                     ZERO_ADDRESS,
                     ohmFake.address,
+                    sOHMFake.address,
                     staking.address,
                     authority.address
                 )
@@ -63,6 +68,19 @@ describe("Distributor", () => {
             await expect(
                 new Distributor__factory(owner).deploy(
                     treasuryFake.address,
+                    ZERO_ADDRESS,
+                    sOHMFake.address,
+                    staking.address,
+                    authority.address
+                )
+            ).to.be.reverted;
+        });
+
+        it("does not accept 0x0 as sOHM address", async () => {
+            await expect(
+                new Distributor__factory(owner).deploy(
+                    treasuryFake.address,
+                    ohmFake.address,
                     ZERO_ADDRESS,
                     staking.address,
                     authority.address
@@ -75,6 +93,7 @@ describe("Distributor", () => {
                 new Distributor__factory(owner).deploy(
                     treasuryFake.address,
                     ohmFake.address,
+                    sOHMFake.address,
                     ZERO_ADDRESS,
                     authority.address
                 )
@@ -87,6 +106,7 @@ describe("Distributor", () => {
             distributor = await new Distributor__factory(owner).deploy(
                 treasuryFake.address,
                 ohmFake.address,
+                sOHMFake.address,
                 staking.address,
                 authority.address
             );

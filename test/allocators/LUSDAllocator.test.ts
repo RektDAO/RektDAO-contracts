@@ -26,7 +26,7 @@ chai.use(smock.matchers);
 
 const ZERO_ADDRESS = ethers.utils.getAddress("0x0000000000000000000000000000000000000000");
 
-describe("LUSDAllocator", () => {
+describe.skip("LUSDAllocator", () => {
     describe("unit tests", () => {
         let owner: SignerWithAddress;
         let governor: SignerWithAddress;

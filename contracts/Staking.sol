@@ -1,12 +1,15 @@
 // SPDX-License-Identifier: AGPL-3.0
-pragma solidity ^0.7.5;
+pragma solidity >=0.7.5;
 
-import "./libraries/SafeMath.sol";
-import "./libraries/SafeERC20.sol";
+// import "./libraries/SafeMath.sol";
+import "@openzeppelin/contracts/utils/math/SafeMath.sol";
+// import "./libraries/SafeERC20.sol";
+import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 
-import "./interfaces/IERC20.sol";
-import "./interfaces/IsOHM.sol";
-import "./interfaces/IgOHM.sol";
+// import "./interfaces/IERC20.sol";
+import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import "./interfaces/IOpenSOHM.sol";
+import "./interfaces/IOpenGOHM.sol";
 import "./interfaces/IDistributor.sol";
 
 import "./types/OlympusAccessControlled.sol";
@@ -16,8 +19,8 @@ contract OlympusStaking is OlympusAccessControlled {
 
     using SafeMath for uint256;
     using SafeERC20 for IERC20;
-    using SafeERC20 for IsOHM;
-    using SafeERC20 for IgOHM;
+    using SafeERC20 for IOpenSOHM;
+    using SafeERC20 for IOpenGOHM;
 
     /* ========== EVENTS ========== */
 
@@ -43,8 +46,8 @@ contract OlympusStaking is OlympusAccessControlled {
     /* ========== STATE VARIABLES ========== */
 
     IERC20 public immutable OHM;
-    IsOHM public immutable sOHM;
-    IgOHM public immutable gOHM;
+    IOpenSOHM public immutable sOHM;
+    IOpenGOHM public immutable gOHM;
 
     Epoch public epoch;
 
@@ -68,9 +71,9 @@ contract OlympusStaking is OlympusAccessControlled {
         require(_ohm != address(0), "Zero address: OHM");
         OHM = IERC20(_ohm);
         require(_sOHM != address(0), "Zero address: sOHM");
-        sOHM = IsOHM(_sOHM);
+        sOHM = IOpenSOHM(_sOHM);
         require(_gOHM != address(0), "Zero address: gOHM");
-        gOHM = IgOHM(_gOHM);
+        gOHM = IOpenGOHM(_gOHM);
 
         epoch = Epoch({length: _epochLength, number: _firstEpochNumber, end: _firstEpochTime, distribute: 0});
     }
@@ -91,8 +94,19 @@ contract OlympusStaking is OlympusAccessControlled {
         bool _rebasing,
         bool _claim
     ) external returns (uint256) {
+        uint256 gBalance;
+        if (!_rebasing && index() > 0) {
+            gBalance = gOHM.balanceTo(_amount); // preserve gOHM amount due
+        }
+        uint256 bounty = rebase();
+        if (gBalance > 0) {
+            _amount = gOHM.balanceFrom(gBalance); // restore gOHM amount due
+        }
+        _amount = _amount.add(bounty); // add bounty if rebase occurred
+
+        // don't transfer OHM until after rebase() call since epoch.distribute is based on OHM.balanceOf(this)
         OHM.safeTransferFrom(msg.sender, address(this), _amount);
-        _amount = _amount.add(rebase()); // add bounty if rebase occurred
+
         if (_claim && warmupPeriod == 0) {
             return _send(_to, _amount, _rebasing);
         } else {
@@ -101,14 +115,15 @@ contract OlympusStaking is OlympusAccessControlled {
                 require(_to == msg.sender, "External deposits for account are locked");
             }
 
+            uint256 gons = sOHM.gonsForBalance(_amount);
             warmupInfo[_to] = Claim({
                 deposit: info.deposit.add(_amount),
-                gons: info.gons.add(sOHM.gonsForBalance(_amount)),
+                gons: info.gons.add(gons),
                 expiry: epoch.number.add(warmupPeriod),
                 lock: info.lock
             });
 
-            gonsInWarmup = gonsInWarmup.add(sOHM.gonsForBalance(_amount));
+            gonsInWarmup = gonsInWarmup.add(gons);
 
             return _amount;
         }
@@ -258,8 +273,9 @@ contract OlympusStaking is OlympusAccessControlled {
             sOHM.safeTransfer(_to, _amount); // send as sOHM (equal unit as OHM)
             return _amount;
         } else {
-            gOHM.mint(_to, gOHM.balanceTo(_amount)); // send as gOHM (convert units from OHM)
-            return gOHM.balanceTo(_amount);
+            uint256 gBalance = gOHM.balanceTo(_amount);
+            gOHM.mint(_to, gBalance); // send as gOHM (convert units from OHM)
+            return gBalance;
         }
     }
 
@@ -284,7 +300,7 @@ contract OlympusStaking is OlympusAccessControlled {
      * @notice seconds until the next epoch begins
      */
     function secondsToNextEpoch() external view returns (uint256) {
-        return epoch.end.sub(block.timestamp);
+        return epoch.end <= block.timestamp ? 0 : epoch.end.sub(block.timestamp);
     }
 
     /* ========== MANAGERIAL FUNCTIONS ========== */

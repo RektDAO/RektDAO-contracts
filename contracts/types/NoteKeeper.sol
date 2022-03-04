@@ -3,7 +3,7 @@ pragma solidity ^0.8.10;
 
 import "../types/FrontEndRewarder.sol";
 
-import "../interfaces/IgOHM.sol";
+import "../interfaces/IOpenGOHM.sol";
 import "../interfaces/IStaking.sol";
 import "../interfaces/ITreasury.sol";
 import "../interfaces/INoteKeeper.sol";
@@ -12,14 +12,14 @@ abstract contract NoteKeeper is INoteKeeper, FrontEndRewarder {
     mapping(address => Note[]) public notes; // user deposit data
     mapping(address => mapping(uint256 => address)) private noteTransfers; // change note ownership
 
-    IgOHM internal immutable gOHM;
+    IOpenGOHM internal immutable gOHM;
     IStaking internal immutable staking;
     ITreasury internal treasury;
 
     constructor(
         IOlympusAuthority _authority,
         IERC20 _ohm,
-        IgOHM _gohm,
+        IOpenGOHM _gohm,
         IStaking _staking,
         ITreasury _treasury
     ) FrontEndRewarder(_authority, _ohm) {
@@ -104,6 +104,7 @@ abstract contract NoteKeeper is INoteKeeper, FrontEndRewarder {
                 payout_ += pay;
             }
         }
+        require(payout_ > 0, "Depository: no payouts to redeem");
 
         if (_sendgOHM) {
             gOHM.transfer(_user, payout_); // send payout as gOHM
@@ -120,7 +121,9 @@ abstract contract NoteKeeper is INoteKeeper, FrontEndRewarder {
      * @return             sum of payout sent, in gOHM
      */
     function redeemAll(address _user, bool _sendgOHM) external override returns (uint256) {
-        return redeem(_user, indexesFor(_user), _sendgOHM);
+        uint256[] memory indexes = indexesFor(_user);
+        require(indexes.length > 0, "Depository: no indexes to redeem");
+        return redeem(_user, indexes, _sendgOHM);
     }
 
     /* ========== TRANSFER ========== */
