@@ -2,6 +2,7 @@ import { HardhatRuntimeEnvironment } from "hardhat/types";
 import { DeployFunction } from "hardhat-deploy/types";
 import { waitFor } from "../txHelper";
 import { CONTRACTS, IS_LOCAL, IS_MAINNET, SECONDARY_DEPLOYMENTS } from "../constants";
+import { verify } from "../verifyHelper";
 import {
     GnosisSafe__factory,
     GnosisSafeL2__factory,
@@ -25,23 +26,28 @@ const func: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
 
     const signer = await ethers.provider.getSigner(deployer);
 
+    let constructorArguments: any[] = [];
     const gnosisSafeSingletonDeployment = await deploy(CONTRACTS.gnosisSafe, {
         from: deployer,
-        args: [],
+        args: constructorArguments,
         log: true,
         skipIfAlreadyDeployed: true,
         // deterministicDeployment: true,
     });
+    await verify(hre, gnosisSafeSingletonDeployment.address, constructorArguments);
+
     const gnosisSafeSingleton__factory = IS_MAINNET ? GnosisSafe__factory : GnosisSafeL2__factory;
     const gnosisSafeSingleton = gnosisSafeSingleton__factory.connect(gnosisSafeSingletonDeployment.address, signer);
 
     const gnosisSafeProxyFactoryDeployment = await deploy(CONTRACTS.gnosisSafeProxyFactory, {
         from: deployer,
-        args: [],
+        args: constructorArguments,
         log: true,
         skipIfAlreadyDeployed: true,
         // deterministicDeployment: true,
     });
+    await verify(hre, gnosisSafeProxyFactoryDeployment.address, constructorArguments);
+
     const gnosisSafeProxyFactory = GnosisSafeProxyFactory__factory.connect(gnosisSafeProxyFactoryDeployment.address, signer);
 
     // https://github.com/gnosis/safe-contracts/blob/main/test/utils/setup.ts#L83

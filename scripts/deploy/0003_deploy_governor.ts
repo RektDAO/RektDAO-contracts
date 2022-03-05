@@ -1,6 +1,7 @@
 import { HardhatRuntimeEnvironment } from "hardhat/types";
 import { DeployFunction } from "hardhat-deploy/types";
 import { BLOCKS_PER_DAY, CONTRACTS } from "../constants";
+import { verify } from "../verifyHelper";
 
 const func: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
     const { deployments, getNamedAccounts } = hre;
@@ -9,15 +10,17 @@ const func: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
 
     const gOhmDeployment = await deployments.get(CONTRACTS.gOhm);
 
-    await deploy(CONTRACTS.governor, {
+    const constructorArguments: any[] = [
+        gOhmDeployment.address,
+        Math.round(BLOCKS_PER_DAY / 24) /* will change this after deploying ie setVotingPeriod(BLOCKS_PER_DAY * 3) */
+    ];
+    const governorDeployment = await deploy(CONTRACTS.governor, {
         from: deployer,
-        args: [
-            gOhmDeployment.address,
-            Math.round(BLOCKS_PER_DAY / 24) /* will change this after deploying ie setVotingPeriod(BLOCKS_PER_DAY * 3) */
-        ],
+        args: constructorArguments,
         log: true,
         skipIfAlreadyDeployed: true,
     });
+    await verify(hre, governorDeployment.address, constructorArguments);
 };
 
 func.tags = [CONTRACTS.governor, "governor"];

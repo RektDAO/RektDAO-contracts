@@ -7,6 +7,7 @@ import {
     DAI__factory,
 } from "../../../types";
 import { waitFor } from "../../txHelper";
+import { verify } from "../../verifyHelper";
 
 const faucetContract = "OhmFaucet";
 
@@ -30,13 +31,14 @@ const func: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
     const treasury = OlympusTreasury__factory.connect(treasuryDeployment.address, signer);
 
     // Deploy Faucuet
-    await deploy(faucetContract, {
+    const constructorArguments: any[] = [ohmDeployment.address];
+    const faucetDeployment = await deploy(faucetContract, {
         from: deployer,
-        args: [ohmDeployment.address],
+        args: constructorArguments,
         log: true,
         skipIfAlreadyDeployed: true,
     });
-    const faucetDeployment = await deployments.get(faucetContract);
+    await verify(hre, faucetDeployment.address, constructorArguments);
 
     let faucetBalance = await ohm.balanceOf(faucetDeployment.address);
     console.log("Faucet Balance: ", faucetBalance.toString());

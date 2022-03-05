@@ -1,6 +1,7 @@
 import { HardhatRuntimeEnvironment } from "hardhat/types";
 import { DeployFunction } from "hardhat-deploy/types";
 import { CONTRACTS } from "../constants";
+import { verify } from "../verifyHelper";
 
 const func: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
     const { deployments, getNamedAccounts } = hre;
@@ -9,12 +10,14 @@ const func: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
 
     const authorityDeployment = await deployments.get(CONTRACTS.authority);
 
-    await deploy(CONTRACTS.ohm, {
+    const constructorArguments: any[] = [authorityDeployment.address];
+    const ohmDeployment = await deploy(CONTRACTS.ohm, {
         from: deployer,
-        args: [authorityDeployment.address],
+        args: constructorArguments,
         log: true,
         skipIfAlreadyDeployed: true,
     });
+    await verify(hre, ohmDeployment.address, constructorArguments);
 };
 
 func.tags = [CONTRACTS.ohm, "staking", "tokens"];

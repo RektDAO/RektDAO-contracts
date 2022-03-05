@@ -1,6 +1,7 @@
 import { HardhatRuntimeEnvironment } from "hardhat/types";
 import { DeployFunction } from "hardhat-deploy/types";
 import { CONTRACTS } from "../constants";
+import { verify } from "../verifyHelper";
 
 const func: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
     const { deployments, getNamedAccounts } = hre;
@@ -13,17 +14,20 @@ const func: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
     const stakingDeployment = await deployments.get(CONTRACTS.staking);
     const treasuryDeployment = await deployments.get(CONTRACTS.treasury);
 
+    const constructorArguments: any[] = [
+        authorityDeployment.address,
+        ohmDeployment.address,
+        gOhmDeployment.address,
+        stakingDeployment.address,
+        treasuryDeployment.address,
+    ];
     const bondDepoDeployment = await deploy(CONTRACTS.bondDepo, {
         from: deployer,
-        args: [
-            authorityDeployment.address,
-            ohmDeployment.address,
-            gOhmDeployment.address,
-            stakingDeployment.address,
-            treasuryDeployment.address,
-        ],
+        args: constructorArguments,
         log: true,
+        skipIfAlreadyDeployed: true,
     });
+    await verify(hre, bondDepoDeployment.address, constructorArguments);
 };
 
 func.tags = [CONTRACTS.bondDepo, "staking", "bonding"];
