@@ -4,7 +4,7 @@ import { CONTRACTS, SECONDARY_DEPLOYMENTS } from "../../constants";
 
 const func: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
     const { deployments, getNamedAccounts, network, ethers } = hre;
-    const { deployer } = await getNamedAccounts();
+    const { deployer, daoMultisig } = await getNamedAccounts();
 
     const ohmDeployment = await deployments.get(CONTRACTS.ohm);
     const sOhmDeployment = await deployments.get(CONTRACTS.sOhm);
@@ -19,6 +19,8 @@ const func: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
     const daiDeployment = await deployments.get(CONTRACTS.DAI);
     const fraxDeployment = await deployments.get(CONTRACTS.FRAX);
 
+    const daoFunds = SECONDARY_DEPLOYMENTS.daoFunds || daoMultisig;
+
     console.log("// LOCAL ADDRESSES");
     console.log("REACT_APP_LOCAL_CONTRACT_OHM_V2=" + ohmDeployment.address);
     console.log("REACT_APP_LOCAL_CONTRACT_SOHM_V2=" + sOhmDeployment.address);
@@ -32,11 +34,11 @@ const func: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
     console.log("REACT_APP_LOCAL_CONTRACT_BOND_DEPOSITORY=" + bondDepoDeployment.address);
     console.log("REACT_APP_LOCAL_CONTRACT_DAI_ADDRESS=" + daiDeployment.address);
     console.log("REACT_APP_LOCAL_CONTRACT_FRAX_ADDRESS=" + fraxDeployment.address);
-    console.log("REACT_APP_LOCAL_CONTRACT_DAO_TREASURY=" + SECONDARY_DEPLOYMENTS.daoFunds);
+    console.log("REACT_APP_LOCAL_CONTRACT_DAO_TREASURY=" + daoFunds);
     console.log("// /LOCAL ADDRESSES");
 };
 
-func.tags = ["setup", "finish"];
+func.tags = ["setup", "finish", "print"];
 func.dependencies = [
     CONTRACTS.ohm,
     CONTRACTS.sOhm,

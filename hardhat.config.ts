@@ -21,24 +21,24 @@ const chainIds = {
     localhost: 999999999,
     hardhat: 1337,
 
-    // eth
+    // ethereum
     mainnet: 1,
     ropsten: 3,
     rinkeby: 4,
     goerli: 5,
     kovan: 42,
 
-    // avax
-    avax: 43114,
-    avax_test: 43113,
+    // avalanche
+    avalanche: 43114,
+    avalancheFujiTestnet: 43113,
 
-    // ftm
-    ftm: 250,
-    ftm_test: 4002,
+    // fantom
+    opera: 250,
+    ftmTestnet: 4002,
 
-    // matic
-    matic: 137,
-    matic_test: 80001,
+    // polygon
+    polygon: 137,
+    polygonMumbai: 80001,
 };
 
 // Ensure that we have all the environment variables we need.
@@ -54,11 +54,11 @@ const alchemyApiKey = process.env.ALCHEMY_API_KEY ?? "NO_ALCHEMY_API_KEY";
 function getChainConfig(network: keyof typeof chainIds): NetworkUserConfig {
     let url;
     switch (network) {
-        case 'avax_test':
-            url = `https://api.avax-test.network/ext/bc/C/rpc`;
-            break;
-        case 'avax':
+        case 'avalanche':
             url = `https://api.avax.network/ext/bc/C/rpc`;
+            break;
+        case 'avalancheFujiTestnet':
+            url = `https://api.avax-test.network/ext/bc/C/rpc`;
             break;
         default:
             url = `https://eth-${network}.alchemyapi.io/v2/${alchemyApiKey}`;
@@ -100,14 +100,14 @@ const config: HardhatUserConfig = {
         // goerli: getChainConfig("goerli"),
         // kovan: getChainConfig("kovan"),
 
-        // avax: getChainConfig("avax"),
-        avax_test: getChainConfig("avax_test"),
+        // avalanche: getChainConfig("avalanche"),
+        avalancheFujiTestnet: getChainConfig("avalancheFujiTestnet"),
 
-        // ftm: getChainConfig("ftm"),
-        // ftm_test: getChainConfig("ftm_test"),
+        // opera: getChainConfig("opera"),
+        // ftmTestnet: getChainConfig("ftmTestnet"),
 
-        // matic: getChainConfig("matic"),
-        // matic_test: getChainConfig("matic_test"),
+        // polygon: getChainConfig("polygon"),
+        // polygonMumbai: getChainConfig("polygonMumbai"),
     },
     paths: {
         artifacts: "./artifacts",
@@ -185,7 +185,7 @@ const config: HardhatUserConfig = {
         },
         daoMultisig: { // if unset for deployment chain, GnosisSafe will be deployed
             [chainIds.mainnet]: "",
-            [chainIds.avax_test]: "0x1CCE34A640C12C0aabD35819596fAD6BE620669b",
+            [chainIds.avalancheFujiTestnet]: "0x1CCE34A640C12C0aabD35819596fAD6BE620669b",
         },
         devFund: {
             default: "0x42069FdaC2d69e0F58A7AB5dC0cA9D5220B8BDF7",

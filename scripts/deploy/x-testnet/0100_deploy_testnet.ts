@@ -12,12 +12,11 @@ import { verify } from "../../verifyHelper";
 const faucetContract = "OhmFaucet";
 
 const func: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
-    const { deployments, getNamedAccounts, network, ethers } = hre;
-
     if (!IS_TESTNET) {
         return;
     }
 
+    const { deployments, getNamedAccounts, network, ethers } = hre;
     const { deploy } = deployments;
     const { deployer } = await getNamedAccounts();
     const signer = await ethers.provider.getSigner(deployer);
