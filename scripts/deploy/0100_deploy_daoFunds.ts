@@ -88,5 +88,4 @@ func.tags = [
     CONTRACTS.gnosisSafe,
     CONTRACTS.gnosisSafeProxyFactory,
     CONTRACTS.gnosisSafeProxy,
-    "testnet",
 ];

@@ -15,7 +15,7 @@ const func: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
         log: true,
         skipIfAlreadyDeployed: true,
     });
-    await verify(hre, eREKTDeployment.address, constructorArguments);
+    await verify(hre, eREKTDeployment.address, constructorArguments, "contracts/REKT/eREKT.sol:EnterREKT");
 };
 
 func.tags = [CONTRACTS.eREKT, "tokens"];

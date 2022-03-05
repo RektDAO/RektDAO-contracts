@@ -2,7 +2,7 @@ import { HardhatRuntimeEnvironment } from "hardhat/types";
 import { IS_LOCAL } from "./constants";
 
 // https://hardhat.org/plugins/nomiclabs-hardhat-etherscan.html#using-programmatically
-export async function verify(hre: HardhatRuntimeEnvironment, address: string, constructorArguments: any[]): Promise<any> {
+export async function verify(hre: HardhatRuntimeEnvironment, address: string, constructorArguments: any[], contract: string | undefined = undefined): Promise<any> {
     if (IS_LOCAL) {
         return true;
     }
@@ -10,6 +10,7 @@ export async function verify(hre: HardhatRuntimeEnvironment, address: string, co
         const res = await hre.run("verify:verify", {
             address,
             constructorArguments,
+            contract,
         });
         return true;
     } catch (e) {
