@@ -37,8 +37,7 @@ const func: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
     const reserveTokenAddress2 = "0x0b9d5D9136855f6FEc3c0993feE6E9CE8a297846";
 
     // Treasury Actions
-    await waitFor(treasury.enable(2, reserveTokenAddress1, ethers.constants.AddressZero)); // Enable as a reserve Token
-    await waitFor(treasury.enable(2, reserveTokenAddress2, ethers.constants.AddressZero)); // Enable as a reserve Token
+    await waitFor(treasury.enableMulti([2], [reserveTokenAddress1, reserveTokenAddress2])); // Enable as a reserve Token
 
     // Create bonds...
     const block = await ethers.provider.getBlock("latest");
@@ -49,12 +48,12 @@ const func: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
     const capacityPct = capacityTotal / 100;
     const buffer = 2e5; // 2e5 = 200000 = 200%
     const priceOne = 1e9; // 1e9 = $1
-    const priceEth = 2822.50 * priceOne; // price at launch time
-    const priceNative = 78.07 * priceOne; // price at launch time
+    const priceEth = 2639.59 * priceOne; // price at launch time
+    const priceNative = 78.16 * priceOne; // price at launch time
     const priceEthPerK = priceEth / 1000;
-    const initialPrice1 = priceNative / priceEthPerK;
-    const priceToken2 = 14.70 * priceOne; // price at launch time
-    const initialPrice2 = priceToken2 / priceEthPerK;
+    const initialPrice1 = parseInt((priceNative / priceEthPerK).toFixed(9)) * priceOne;
+    const priceToken2 = 13.86 * priceOne; // price at launch time
+    const initialPrice2 = parseInt((priceToken2 / priceEthPerK).toFixed(9)) * priceOne;
 
     // _booleans
     const capacityInQuote = false;

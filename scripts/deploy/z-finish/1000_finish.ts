@@ -54,7 +54,7 @@ const func: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
     console.log("Setup -- authorityContract.pushGovernor: set governor on authority");
 };
 
-func.tags = ["setup"];
+func.tags = ["setup", "finish"];
 func.dependencies = [
     CONTRACTS.authority,
     CONTRACTS.ohm,
