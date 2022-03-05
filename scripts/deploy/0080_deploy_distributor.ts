@@ -1,6 +1,7 @@
 import { HardhatRuntimeEnvironment } from "hardhat/types";
 import { DeployFunction } from "hardhat-deploy/types";
 import { CONTRACTS } from "../constants";
+import { verify } from "../verifyHelper";
 
 const func: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
     const { deployments, getNamedAccounts } = hre;
@@ -14,17 +15,20 @@ const func: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
     const authorityDeployment = await deployments.get(CONTRACTS.authority);
 
     // TODO: firstEpochBlock is passed in but contract constructor param is called _nextEpochBlock
-    await deploy(CONTRACTS.distributor, {
+    const constructorArguments: any[] = [
+        treasuryDeployment.address,
+        ohmDeployment.address,
+        sOhmDeployment.address,
+        stakingDeployment.address,
+        authorityDeployment.address,
+    ];
+    const distributorDeployment = await deploy(CONTRACTS.distributor, {
         from: deployer,
-        args: [
-            treasuryDeployment.address,
-            ohmDeployment.address,
-            sOhmDeployment.address,
-            stakingDeployment.address,
-            authorityDeployment.address,
-        ],
+        args: constructorArguments,
         log: true,
+        skipIfAlreadyDeployed: true,
     });
+    await verify(hre, distributorDeployment.address, constructorArguments);
 };
 
 func.tags = [CONTRACTS.distributor, "staking"];

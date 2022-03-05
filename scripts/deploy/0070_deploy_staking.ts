@@ -6,6 +6,7 @@ import {
     FIRST_EPOCH_TIME,
     FIRST_EPOCH_NUMBER,
 } from "../constants";
+import { verify } from "../verifyHelper";
 
 const func: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
     const { deployments, getNamedAccounts } = hre;
@@ -17,19 +18,22 @@ const func: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
     const sOhmDeployment = await deployments.get(CONTRACTS.sOhm);
     const gOhmDeployment = await deployments.get(CONTRACTS.gOhm);
 
-    await deploy(CONTRACTS.staking, {
+    const constructorArguments: any[] = [
+        ohmDeployment.address,
+        sOhmDeployment.address,
+        gOhmDeployment.address,
+        EPOCH_SECONDS,
+        FIRST_EPOCH_NUMBER,
+        FIRST_EPOCH_TIME,
+        authorityDeployment.address,
+    ];
+    const stakingDeployment = await deploy(CONTRACTS.staking, {
         from: deployer,
-        args: [
-            ohmDeployment.address,
-            sOhmDeployment.address,
-            gOhmDeployment.address,
-            EPOCH_SECONDS,
-            FIRST_EPOCH_NUMBER,
-            FIRST_EPOCH_TIME,
-            authorityDeployment.address,
-        ],
+        args: constructorArguments,
         log: true,
+        skipIfAlreadyDeployed: true,
     });
+    await verify(hre, stakingDeployment.address, constructorArguments);
 };
 
 func.tags = [CONTRACTS.staking, "staking"];
