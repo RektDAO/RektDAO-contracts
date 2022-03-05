@@ -61,7 +61,6 @@ export const EPOCH_SECONDS = EPOCH_HOURS * 60 * 60; // 4 = 14400
 export const EPOCHS_PER_DAY = 24 / EPOCH_HOURS;
 export const TOKEN_DECIMALS = 9;
 export const TOKEN_DECIMALS_TENS = 10 ** TOKEN_DECIMALS;
-export const NETWORK_CONFIRMATIONS = IS_LOCAL ? 1 : 6;
 export const SECONDARY_DEPLOYMENTS = {
     daoFunds: "",
 };
@@ -96,9 +95,7 @@ export const TREASURY_TIMELOCK = IS_LOCAL ? 1 : BLOCKS_PER_DAY;
 export const LARGE_APPROVAL = "1" + "0".repeat(32);
 // export const EPOCH_LENGTH_IN_BLOCKS = "1000"; // this is wrong, Epoch.length is actually in seconds
 export const FIRST_EPOCH_NUMBER = "1";
-export const FIRST_EPOCH_TIME = "1646244000"; // 1646244000 = Wed Mar 02 2022 12:00:00 GMT
-// export const FIRST_EPOCH_TIME = "1646287200"; // 1646287200 = Thu Mar 03 2022 00:00:00 GMT
-// export const FIRST_EPOCH_TIME = "1646330400"; // 1646330400 = Thu Mar 03 2022 12:00:00 GMT
+export const FIRST_EPOCH_TIME = "1646330400"; // 1646330400 = Thu Mar 03 2022 12:00:00 GMT
 if (!IS_TESTNET && (Number(FIRST_EPOCH_TIME) < new Date().getTime())) {
     console.error("FIRST_EPOCH_TIME is in the past");
     process.exit(1);

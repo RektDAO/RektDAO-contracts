@@ -1,7 +1,7 @@
 import { HardhatRuntimeEnvironment } from "hardhat/types";
 import { DeployFunction } from "hardhat-deploy/types";
 import { waitFor } from "../txHelper";
-import { CONTRACTS, IS_LOCAL, IS_MAINNET, NETWORK_CONFIRMATIONS, SECONDARY_DEPLOYMENTS } from "../constants";
+import { CONTRACTS, IS_LOCAL, IS_MAINNET, SECONDARY_DEPLOYMENTS } from "../constants";
 import {
     GnosisSafe__factory,
     GnosisSafeL2__factory,
@@ -30,7 +30,7 @@ const func: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
         args: [],
         log: true,
         skipIfAlreadyDeployed: true,
-        deterministicDeployment: true,
+        // deterministicDeployment: true,
     });
     const gnosisSafeSingleton__factory = IS_MAINNET ? GnosisSafe__factory : GnosisSafeL2__factory;
     const gnosisSafeSingleton = gnosisSafeSingleton__factory.connect(gnosisSafeSingletonDeployment.address, signer);
@@ -40,7 +40,7 @@ const func: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
         args: [],
         log: true,
         skipIfAlreadyDeployed: true,
-        deterministicDeployment: true,
+        // deterministicDeployment: true,
     });
     const gnosisSafeProxyFactory = GnosisSafeProxyFactory__factory.connect(gnosisSafeProxyFactoryDeployment.address, signer);
 

@@ -36,7 +36,7 @@ const func: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
     console.log("// /LOCAL ADDRESSES");
 };
 
-func.tags = ["setup"];
+func.tags = ["setup", "finish"];
 func.dependencies = [
     CONTRACTS.ohm,
     CONTRACTS.sOhm,
