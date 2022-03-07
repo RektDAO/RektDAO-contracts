@@ -1478,8 +1478,8 @@ contract OpenOHM is ERC20Permit, IOpenOHM, OlympusAccessControlled {
     using SafeMath for uint256;
 
     constructor(address _authority)
-        ERC20("Olympus", "OHM")
-        ERC20Permit("Olympus")
+        ERC20("Rekt", "REKT")
+        ERC20Permit("Rekt")
         OlympusAccessControlled(IOlympusAuthority(_authority))
     {}
 

@@ -74,7 +74,7 @@ contract OpenSOHM is IOpenSOHM, ERC20Permit {
 
     /* ========== CONSTRUCTOR ========== */
 
-    constructor() ERC20("Staked OHM", "sOHM") ERC20Permit("Staked OHM") {
+    constructor() ERC20("Staked REKT", "sREKT") ERC20Permit("Staked REKT") {
         initializer = msg.sender;
         _totalSupply = INITIAL_FRAGMENTS_SUPPLY;
         _gonsPerFragment = TOTAL_GONS.div(_totalSupply);
