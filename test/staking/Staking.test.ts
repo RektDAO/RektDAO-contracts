@@ -304,7 +304,7 @@ describe("OlympusStaking", () => {
                 await staking.connect(alice).stake(alice.address, amount, rebasing, claim);
 
                 const warmupInfo = await staking.warmupInfo(alice.address);
-                console.log(warmupInfo);
+                // console.log(warmupInfo);
                 expect(await staking.supplyInWarmup()).to.equal(amount);
             });
         });

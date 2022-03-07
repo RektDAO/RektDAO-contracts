@@ -30,8 +30,8 @@ describe("OpenOHM", () => {
     });
 
     it("correctly constructs an ERC20", async () => {
-        expect(await ohm.name()).to.equal("Olympus");
-        expect(await ohm.symbol()).to.equal("OHM");
+        expect(await ohm.name()).to.equal("Rekt");
+        expect(await ohm.symbol()).to.equal("REKT");
         expect(await ohm.decimals()).to.equal(9);
     });
 

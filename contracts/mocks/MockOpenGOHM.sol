@@ -10,7 +10,7 @@ contract MockOpenGOHM is MockOpenERC20 {
 
     uint256 public immutable index;
 
-    constructor(uint256 _initIndex) MockOpenERC20("Governance OHM", "gOHM") {
+    constructor(uint256 _initIndex) MockOpenERC20("Governance REKT", "gREKT") {
         index = _initIndex;
     }
 

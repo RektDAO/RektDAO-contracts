@@ -12,8 +12,8 @@ import "./OpenGOHMVotes.sol";
 
 contract OpenGOHM is ERC20, ERC20Permit, ERC20Votes, OpenGOHMVotes {
     constructor(address _approved, address _sOHM)
-        ERC20("Governance OHM", "gOHM")
-        ERC20Permit("Governance OHM")
+        ERC20("Governance REKT", "gREKT")
+        ERC20Permit("Governance REKT")
         OpenGOHMVotes(_approved, _sOHM)
     {}
 

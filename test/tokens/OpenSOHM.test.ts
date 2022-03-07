@@ -43,8 +43,8 @@ describe("OpenSOHM", () => {
     });
 
     it("is constructed correctly", async () => {
-        expect(await sOhm.name()).to.equal("Staked OHM");
-        expect(await sOhm.symbol()).to.equal("sOHM");
+        expect(await sOhm.name()).to.equal("Staked REKT");
+        expect(await sOhm.symbol()).to.equal("sREKT");
         expect(await sOhm.decimals()).to.equal(9);
     });
 
