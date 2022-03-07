@@ -42,31 +42,31 @@ const func: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
     const block = await ethers.provider.getBlock("latest");
 
     // _market
-    const capacityTotal = 100e18; // 1000e9 = 1000; 1e18 = 1 billion [1e9(e9)]
+    const capacityTotal = 10e18; // 1000e9 = 1000; 1e18 = 1 billion [1e9(e9)]
     console.log("total bonds capacity:", capacityTotal);
     const capacityPct = capacityTotal / 100;
     const buffer = 2e5; // 2e5 = 200000 = 200%
     const priceOne = 1e9; // 1e9 = $1
-    const priceEth = 2639.59 * priceOne; // price at launch time
-    const priceNative = 78.16 * priceOne; // price at launch time
+    const priceEth = 2639.59; // price at launch time
+    const priceNative = 78.16; // price at launch time
     const priceEthPerK = priceEth / 1000;
-    const initialPrice1 = parseInt((priceNative / priceEthPerK).toFixed(9)) * priceOne;
-    const priceToken2 = 13.86 * priceOne; // price at launch time
-    const initialPrice2 = parseInt((priceToken2 / priceEthPerK).toFixed(9)) * priceOne;
+    const initialPrice1 = Math.floor(priceOne * priceNative / priceEthPerK);
+    const priceToken2 = 13.86; // price at launch time
+    const initialPrice2 = Math.floor(priceOne * priceToken2 / priceEthPerK);
 
     // _booleans
     const capacityInQuote = false;
     const fixedTerm = true;
 
     // _terms
-    const vesting = 10;
+    const vesting = 10; // seconds
     const timeToConclusion = 60 * 60 * 24 * 365; // 1 year = 31536000 seconds
     const conclusion = block.timestamp + timeToConclusion;
 
     // _intervals
     const depositInterval = 60 * 60; // 1 hr
     // numIntervals = timeToConclusion / depositInterval = 8760
-    // maxPayout per depositInterval = capacity / numIntervals = 100e9 / 8760 = 11_415_525 / hr (total)
+    // maxPayout per depositInterval = capacity / numIntervals = 10e9 / 8760 = 1_141_552 / hr (total)
     const tuneInterval = depositInterval;
 
     // create bond: reserveTokenAddress1
