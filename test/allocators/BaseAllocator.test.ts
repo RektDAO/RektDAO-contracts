@@ -34,7 +34,7 @@ import {
     addEth,
 } from "../utils/scripts";
 
-describe("BaseAllocator", async () => {
+describe.skip("BaseAllocator", async () => {
     // signers
     let owner: SignerWithAddress;
     let governor: SignerWithAddress;

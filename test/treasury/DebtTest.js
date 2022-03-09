@@ -71,9 +71,9 @@ describe("Treasury", async () => {
         erc20Factory = await ethers.getContractFactory("DAI");
 
         stakingFactory = await ethers.getContractFactory("OlympusStaking");
-        ohmFactory = await ethers.getContractFactory("OlympusERC20Token");
-        sOhmFactory = await ethers.getContractFactory("sOlympus");
-        gOhmFactory = await ethers.getContractFactory("gOHM");
+        ohmFactory = await ethers.getContractFactory("OpenOHM");
+        sOhmFactory = await ethers.getContractFactory("OpenSOHM");
+        gOhmFactory = await ethers.getContractFactory("OpenGOHM");
         treasuryFactory = await ethers.getContractFactory("OlympusTreasury");
         distributorFactory = await ethers.getContractFactory("Distributor");
     });

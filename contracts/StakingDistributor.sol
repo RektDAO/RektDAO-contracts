@@ -203,8 +203,8 @@ contract Distributor is IDistributor, OlympusAccessControlled {
         uint256 staked = sOHM.circulatingSupply();
 
         // 1e15 = sOHM decimals (1e9) in millions (1e6)
-        // add 1 at end so denom is min 1 - NOT necessary due to existence of eREKT before distribution
-        return FixedPoint.sqrt(FixedPoint.fraction(staked, 1e15)).decode112with18(); // .add(1e18);
+        uint256 denom = FixedPoint.sqrt(FixedPoint.fraction(staked, 1e15)).decode112with18();
+        return denom > 0 ? denom : 1e18; // if 0 return 1 to avoid div-by-0
     }
 
     /**
