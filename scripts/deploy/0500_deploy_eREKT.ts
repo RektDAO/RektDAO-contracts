@@ -9,13 +9,13 @@ const func: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
     const { deployer } = await getNamedAccounts();
 
     const constructorArguments: any[] = [EREKT_MINT_INT];
-    const eREKTDeployment = await deploy(CONTRACTS.eREKT, {
+    const dep = await deploy(CONTRACTS.eREKT, {
         from: deployer,
         args: constructorArguments,
         log: true,
         skipIfAlreadyDeployed: true,
     });
-    await verify(hre, eREKTDeployment.address, constructorArguments, "contracts/REKT/eREKT.sol:EnterREKT");
+    if (dep.newlyDeployed) await verify(hre, dep.address, constructorArguments, "contracts/REKT/eREKT.sol:EnterREKT");
 };
 
 func.tags = [CONTRACTS.eREKT, "tokens"];

@@ -29,17 +29,17 @@ const func: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
     const mockDai = DAI__factory.connect(daiDeployment.address, signer);
     const treasury = OlympusTreasury__factory.connect(treasuryDeployment.address, signer);
 
-    // Deploy Faucuet
+    // Deploy Faucet
     const constructorArguments: any[] = [ohmDeployment.address];
-    const faucetDeployment = await deploy(faucetContract, {
+    const depFaucet = await deploy(faucetContract, {
         from: deployer,
         args: constructorArguments,
         log: true,
         skipIfAlreadyDeployed: true,
     });
-    await verify(hre, faucetDeployment.address, constructorArguments);
+    if (depFaucet.newlyDeployed) await verify(hre, depFaucet.address, constructorArguments);
 
-    let faucetBalance = await ohm.balanceOf(faucetDeployment.address);
+    let faucetBalance = await ohm.balanceOf(depFaucet.address);
     console.log("Faucet Balance: ", faucetBalance.toString());
     const minOhm = ethers.BigNumber.from(10000e9);
     if (faucetBalance.gt(minOhm)) {
@@ -64,10 +64,10 @@ const func: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
     console.log("Ohm minted: ", ohmMinted.toString());
 
     // Fund faucet w/ newly minted dai.
-    await waitFor(ohm.approve(faucetDeployment.address, ohmMinted));
-    await waitFor(ohm.transfer(faucetDeployment.address, ohmMinted));
+    await waitFor(ohm.approve(depFaucet.address, ohmMinted));
+    await waitFor(ohm.transfer(depFaucet.address, ohmMinted));
 
-    faucetBalance = await ohm.balanceOf(faucetDeployment.address);
+    faucetBalance = await ohm.balanceOf(depFaucet.address);
     console.log("Faucet balance:", faucetBalance.toString());
 };
 

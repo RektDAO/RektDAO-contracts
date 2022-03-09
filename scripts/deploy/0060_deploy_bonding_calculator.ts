@@ -12,13 +12,13 @@ const func: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
     const ohmDeployment = await deployments.get(CONTRACTS.ohm);
 
     const constructorArguments: any[] = [ohmDeployment.address];
-    const bondingCalculatorDeployment = await deploy(CONTRACTS.bondingCalculator, {
+    const dep = await deploy(CONTRACTS.bondingCalculator, {
         from: deployer,
         args: constructorArguments,
         log: true,
         skipIfAlreadyDeployed: true,
     });
-    await verify(hre, bondingCalculatorDeployment.address, constructorArguments);
+    if (dep.newlyDeployed) await verify(hre, dep.address, constructorArguments);
 };
 
 func.tags = [CONTRACTS.bondingCalculator, "staking", "bonding"];

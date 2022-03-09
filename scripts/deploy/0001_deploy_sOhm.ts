@@ -9,13 +9,13 @@ const func: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
     const { deployer } = await getNamedAccounts();
 
     const constructorArguments: any[] = [];
-    const sOhmDeployment = await deploy(CONTRACTS.sOhm, {
+    const dep = await deploy(CONTRACTS.sOhm, {
         from: deployer,
         args: constructorArguments,
         log: true,
         skipIfAlreadyDeployed: true,
     });
-    await verify(hre, sOhmDeployment.address, constructorArguments);
+    if (dep.newlyDeployed) await verify(hre, dep.address, constructorArguments);
 };
 
 func.tags = [CONTRACTS.sOhm, "staking", "tokens"];

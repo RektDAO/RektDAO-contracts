@@ -21,6 +21,7 @@ export enum NetworkId {
 
 export const CHAIN_ID = Number(hre.network.config.chainId);
 console.log("chainId", CHAIN_ID);
+export const NETWORK_ID_KEY = NetworkId[CHAIN_ID]; // i.e. "MAINNET"
 export const IS_MAINNET = (CHAIN_ID == NetworkId.MAINNET);
 export const IS_TESTNET = [
     NetworkId.LOCAL,

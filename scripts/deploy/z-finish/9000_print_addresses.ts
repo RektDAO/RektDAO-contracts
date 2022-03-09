@@ -1,6 +1,6 @@
 import { HardhatRuntimeEnvironment } from "hardhat/types";
 import { DeployFunction } from "hardhat-deploy/types";
-import { CONTRACTS, SECONDARY_DEPLOYMENTS } from "../../constants";
+import { CONTRACTS, NETWORK_ID_KEY, SECONDARY_DEPLOYMENTS } from "../../constants";
 
 const func: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
     const { deployments, getNamedAccounts, network, ethers } = hre;
@@ -21,21 +21,39 @@ const func: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
 
     const daoFunds = SECONDARY_DEPLOYMENTS.daoFunds || daoMultisig;
 
-    console.log("// LOCAL ADDRESSES");
-    console.log("REACT_APP_LOCAL_CONTRACT_OHM_V2=" + ohmDeployment.address);
-    console.log("REACT_APP_LOCAL_CONTRACT_SOHM_V2=" + sOhmDeployment.address);
-    console.log("REACT_APP_LOCAL_CONTRACT_GOHM_ADDRESS=" + gOhmDeployment.address);
-    console.log("REACT_APP_LOCAL_CONTRACT_GOVERNOR_ADDRESS=" + governorDeployment.address);
-    console.log("REACT_APP_LOCAL_CONTRACT_TREASURY_V2=" + treasuryDeployment.address);
-    console.log("REACT_APP_LOCAL_CONTRACT_MIGRATOR_ADDRESS="/* + migratorDeployment.address */);
-    console.log("REACT_APP_LOCAL_CONTRACT_BONDINGCALC_V2=" + bondingCalculatorDeployment.address);
-    console.log("REACT_APP_LOCAL_CONTRACT_STAKING_V2=" + stakingDeployment.address);
-    console.log("REACT_APP_LOCAL_CONTRACT_DISTRIBUTOR_ADDRESS=" + distributorDeployment.address);
-    console.log("REACT_APP_LOCAL_CONTRACT_BOND_DEPOSITORY=" + bondDepoDeployment.address);
-    console.log("REACT_APP_LOCAL_CONTRACT_DAI_ADDRESS=" + daiDeployment.address);
-    console.log("REACT_APP_LOCAL_CONTRACT_FRAX_ADDRESS=" + fraxDeployment.address);
-    console.log("REACT_APP_LOCAL_CONTRACT_DAO_TREASURY=" + daoFunds);
-    console.log("// /LOCAL ADDRESSES");
+    console.log("\n\n// FOR FRONTEND: .env");
+    console.log(`// ${NETWORK_ID_KEY} ADDRESSES`);
+    console.log(`REACT_APP_${NETWORK_ID_KEY}_CONTRACT_OHM_V2=${ohmDeployment.address}`);
+    console.log(`REACT_APP_${NETWORK_ID_KEY}_CONTRACT_SOHM_V2=${sOhmDeployment.address}`);
+    console.log(`REACT_APP_${NETWORK_ID_KEY}_CONTRACT_GOHM_ADDRESS=${gOhmDeployment.address}`);
+    console.log(`REACT_APP_${NETWORK_ID_KEY}_CONTRACT_GOVERNOR_ADDRESS=${governorDeployment.address}`);
+    console.log(`REACT_APP_${NETWORK_ID_KEY}_CONTRACT_TREASURY_V2=${treasuryDeployment.address}`);
+    console.log(`REACT_APP_${NETWORK_ID_KEY}_CONTRACT_MIGRATOR_ADDRESS=`); // migratorDeployment.address
+    console.log(`REACT_APP_${NETWORK_ID_KEY}_CONTRACT_BONDINGCALC_V2=${bondingCalculatorDeployment.address}`);
+    console.log(`REACT_APP_${NETWORK_ID_KEY}_CONTRACT_STAKING_V2=${stakingDeployment.address}`);
+    console.log(`REACT_APP_${NETWORK_ID_KEY}_CONTRACT_DISTRIBUTOR_ADDRESS=${distributorDeployment.address}`);
+    console.log(`REACT_APP_${NETWORK_ID_KEY}_CONTRACT_BOND_DEPOSITORY=${bondDepoDeployment.address}`);
+    console.log(`REACT_APP_${NETWORK_ID_KEY}_CONTRACT_DAI_ADDRESS=${daiDeployment.address}`);
+    console.log(`REACT_APP_${NETWORK_ID_KEY}_CONTRACT_FRAX_ADDRESS=${fraxDeployment.address}`);
+    console.log(`REACT_APP_${NETWORK_ID_KEY}_CONTRACT_DAO_TREASURY=${daoFunds}`);
+    console.log(`// /${NETWORK_ID_KEY} ADDRESSES`);
+
+    console.log("\n\n// FOR FRONTEND: networkDetails.ts");
+    console.log(`// ${NETWORK_ID_KEY} ADDRESSES`);
+    console.log(`OHM_V2: "${ohmDeployment.address}",`);
+    console.log(`SOHM_V2: "${sOhmDeployment.address}",`);
+    console.log(`GOHM_ADDRESS: "${gOhmDeployment.address}",`);
+    console.log(`GOVERNOR_ADDRESS: "${governorDeployment.address}",`);
+    console.log(`TREASURY_V2: "${treasuryDeployment.address}",`);
+    console.log(`MIGRATOR_ADDRESS="",`); // migratorDeployment.address
+    console.log(`BONDINGCALC_V2: "${bondingCalculatorDeployment.address}",`);
+    console.log(`STAKING_V2: "${stakingDeployment.address}",`);
+    console.log(`DISTRIBUTOR_ADDRESS: "${distributorDeployment.address}",`);
+    console.log(`BOND_DEPOSITORY: "${bondDepoDeployment.address}",`);
+    console.log(`DAI_ADDRESS: "${daiDeployment.address}",`);
+    console.log(`FRAX_ADDRESS: "${fraxDeployment.address}",`);
+    console.log(`DAO_TREASURY: "${daoFunds}",`);
+    console.log(`// /${NETWORK_ID_KEY} ADDRESSES`);
 };
 
 func.tags = ["setup", "finish", "print"];
