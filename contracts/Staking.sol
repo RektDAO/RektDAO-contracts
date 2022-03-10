@@ -102,10 +102,11 @@ contract OlympusStaking is OlympusAccessControlled {
         if (gBalance > 0) {
             _amount = gOHM.balanceFrom(gBalance); // restore gOHM amount due
         }
-        _amount = _amount.add(bounty); // add bounty if rebase occurred
 
         // don't transfer OHM until after rebase() call since epoch.distribute is based on OHM.balanceOf(this)
         OHM.safeTransferFrom(msg.sender, address(this), _amount);
+
+        _amount = _amount.add(bounty); // add bounty if rebase occurred
 
         if (_claim && warmupPeriod == 0) {
             return _send(_to, _amount, _rebasing);

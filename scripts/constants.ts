@@ -93,7 +93,6 @@ export const BLOCKS_PER_EPOCH = BLOCKS_PER_DAY / EPOCHS_PER_DAY;
 export const TREASURY_TIMELOCK = IS_LOCAL ? 1 : BLOCKS_PER_DAY;
 
 // Constants
-export const LARGE_APPROVAL = "1" + "0".repeat(32);
 // export const EPOCH_LENGTH_IN_BLOCKS = "1000"; // this is wrong, Epoch.length is actually in seconds
 export const FIRST_EPOCH_NUMBER = "1";
 export const FIRST_EPOCH_TIME = "1646330400"; // 1646330400 = Thu Mar 03 2022 12:00:00 GMT

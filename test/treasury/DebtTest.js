@@ -169,7 +169,7 @@ describe("Treasury", async () => {
         await sOhm.transfer(alice.address, debtLimit);
     });
 
-    it.only("should not have debt logged for alice", async () => {
+    it("should not have debt logged for alice", async () => {
         expect(await sOhm.debtBalances(alice.address)).to.equal(0);
     });
 
