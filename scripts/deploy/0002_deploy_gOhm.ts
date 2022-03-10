@@ -12,13 +12,13 @@ const func: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
     // const migratorDeployment = await deployments.get(CONTRACTS.migrator);
 
     const constructorArguments: any[] = [deployer, sOhmDeployment.address];
-    const gOhmDeployment = await deploy(CONTRACTS.gOhm, {
+    const dep = await deploy(CONTRACTS.gOhm, {
         from: deployer,
         args: constructorArguments,
         log: true,
         skipIfAlreadyDeployed: true,
     });
-    await verify(hre, gOhmDeployment.address, constructorArguments);
+    if (dep.newlyDeployed) await verify(hre, dep.address, constructorArguments);
 };
 
 func.tags = [CONTRACTS.gOhm, /*"migration", */"tokens"];

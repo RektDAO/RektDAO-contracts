@@ -4,8 +4,8 @@ import { ethers } from "hardhat";
 import { FakeContract, smock } from "@defi-wonderland/smock";
 import {
     ITreasury,
-    IsOHM,
-    IOHM,
+    IOpenSOHM,
+    IOpenOHM,
     Distributor__factory,
     Distributor,
     OlympusAuthority,
@@ -14,7 +14,7 @@ import {
 
 chai.use(smock.matchers);
 
-const ZERO_ADDRESS = ethers.utils.getAddress("0x0000000000000000000000000000000000000000");
+const ZERO_ADDRESS = ethers.constants.AddressZero;
 
 describe("Distributor", () => {
     let owner: SignerWithAddress;
@@ -22,8 +22,8 @@ describe("Distributor", () => {
     let governor: SignerWithAddress;
     let guardian: SignerWithAddress;
     let other: SignerWithAddress;
-    let ohmFake: FakeContract<IOHM>;
-    let sOHMFake: FakeContract<IsOHM>;
+    let ohmFake: FakeContract<IOpenOHM>;
+    let sOHMFake: FakeContract<IOpenSOHM>;
     let treasuryFake: FakeContract<ITreasury>;
     let distributor: Distributor;
     let authority: OlympusAuthority;
@@ -31,8 +31,8 @@ describe("Distributor", () => {
     beforeEach(async () => {
         [owner, staking, governor, guardian, other] = await ethers.getSigners();
         treasuryFake = await smock.fake<ITreasury>("ITreasury");
-        ohmFake = await smock.fake<IOHM>("IOHM");
-        sOHMFake = await smock.fake<IsOHM>("contracts/interfaces/IsOHM.sol:IsOHM");
+        ohmFake = await smock.fake<IOpenOHM>("IOpenOHM");
+        sOHMFake = await smock.fake<IOpenSOHM>("IOpenSOHM");
         authority = await new OlympusAuthority__factory(owner).deploy(
             governor.address,
             guardian.address,

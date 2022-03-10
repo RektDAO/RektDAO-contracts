@@ -27,28 +27,28 @@ const func: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
     const signer = await ethers.provider.getSigner(deployer);
 
     let constructorArguments: any[] = [];
-    const gnosisSafeSingletonDeployment = await deploy(CONTRACTS.gnosisSafe, {
+    const dep1 = await deploy(CONTRACTS.gnosisSafe, {
         from: deployer,
         args: constructorArguments,
         log: true,
         skipIfAlreadyDeployed: true,
         // deterministicDeployment: true,
     });
-    await verify(hre, gnosisSafeSingletonDeployment.address, constructorArguments);
+    if (dep1.newlyDeployed) await verify(hre, dep1.address, constructorArguments);
 
     const gnosisSafeSingleton__factory = IS_MAINNET ? GnosisSafe__factory : GnosisSafeL2__factory;
-    const gnosisSafeSingleton = gnosisSafeSingleton__factory.connect(gnosisSafeSingletonDeployment.address, signer);
+    const gnosisSafeSingleton = gnosisSafeSingleton__factory.connect(dep1.address, signer);
 
-    const gnosisSafeProxyFactoryDeployment = await deploy(CONTRACTS.gnosisSafeProxyFactory, {
+    const dep2 = await deploy(CONTRACTS.gnosisSafeProxyFactory, {
         from: deployer,
         args: constructorArguments,
         log: true,
         skipIfAlreadyDeployed: true,
         // deterministicDeployment: true,
     });
-    await verify(hre, gnosisSafeProxyFactoryDeployment.address, constructorArguments);
+    if (dep2.newlyDeployed) await verify(hre, dep2.address, constructorArguments);
 
-    const gnosisSafeProxyFactory = GnosisSafeProxyFactory__factory.connect(gnosisSafeProxyFactoryDeployment.address, signer);
+    const gnosisSafeProxyFactory = GnosisSafeProxyFactory__factory.connect(dep2.address, signer);
 
     // https://github.com/gnosis/safe-contracts/blob/main/test/utils/setup.ts#L83
     const initializer = gnosisSafeSingleton.interface.encodeFunctionData("setup", [
@@ -61,9 +61,9 @@ const func: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
         0,
         ethers.constants.AddressZero
     ]);
-    const saltNonce = await ethers.provider.getTransactionCount(gnosisSafeProxyFactoryDeployment.address);
+    const saltNonce = await ethers.provider.getTransactionCount(dep2.address);
     const gnosisSafeProxyReceipt = await waitFor(gnosisSafeProxyFactory.createProxyWithNonce(
-        gnosisSafeSingletonDeployment.address,
+        dep1.address,
         initializer,
         saltNonce
     ));

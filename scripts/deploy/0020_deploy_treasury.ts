@@ -13,13 +13,13 @@ const func: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
     const authorityDeployment = await deployments.get(CONTRACTS.authority);
 
     const constructorArguments: any[] = [ohmDeployment.address, TREASURY_TIMELOCK, authorityDeployment.address];
-    const treasuryDeployment = await deploy(CONTRACTS.treasury, {
+    const dep = await deploy(CONTRACTS.treasury, {
         from: deployer,
         args: constructorArguments,
         log: true,
         skipIfAlreadyDeployed: true,
     });
-    await verify(hre, treasuryDeployment.address, constructorArguments);
+    if (dep.newlyDeployed) await verify(hre, dep.address, constructorArguments);
 };
 
 func.tags = [CONTRACTS.treasury, "treasury"];

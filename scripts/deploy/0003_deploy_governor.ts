@@ -14,13 +14,13 @@ const func: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
         gOhmDeployment.address,
         Math.round(BLOCKS_PER_DAY / 24) /* will change this after deploying ie setVotingPeriod(BLOCKS_PER_DAY * 3) */
     ];
-    const governorDeployment = await deploy(CONTRACTS.governor, {
+    const dep = await deploy(CONTRACTS.governor, {
         from: deployer,
         args: constructorArguments,
         log: true,
         skipIfAlreadyDeployed: true,
     });
-    await verify(hre, governorDeployment.address, constructorArguments);
+    if (dep.newlyDeployed) await verify(hre, dep.address, constructorArguments);
 };
 
 func.tags = [CONTRACTS.governor, "governor"];

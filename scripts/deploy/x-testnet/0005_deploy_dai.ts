@@ -13,13 +13,13 @@ const func: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
     const { deployer } = await getNamedAccounts();
 
     const constructorArguments: any[] = [0];
-    const daiDeployment = await deploy(CONTRACTS.DAI, {
+    const dep = await deploy(CONTRACTS.DAI, {
         from: deployer,
         args: constructorArguments,
         log: true,
         skipIfAlreadyDeployed: true,
     });
-    await verify(hre, daiDeployment.address, constructorArguments);
+    if (dep.newlyDeployed) await verify(hre, dep.address, constructorArguments);
 };
 
 export default func;

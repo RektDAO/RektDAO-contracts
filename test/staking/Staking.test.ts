@@ -16,7 +16,7 @@ import {
 
 chai.use(smock.matchers);
 
-const ZERO_ADDRESS = ethers.utils.getAddress("0x0000000000000000000000000000000000000000");
+const ZERO_ADDRESS = ethers.constants.AddressZero;
 
 describe("OlympusStaking", () => {
     let owner: SignerWithAddress;

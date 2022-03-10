@@ -21,13 +21,13 @@ const func: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
         stakingDeployment.address,
         treasuryDeployment.address,
     ];
-    const bondDepoDeployment = await deploy(CONTRACTS.bondDepo, {
+    const dep = await deploy(CONTRACTS.bondDepo, {
         from: deployer,
         args: constructorArguments,
         log: true,
         skipIfAlreadyDeployed: true,
     });
-    await verify(hre, bondDepoDeployment.address, constructorArguments);
+    if (dep.newlyDeployed) await verify(hre, dep.address, constructorArguments);
 };
 
 func.tags = [CONTRACTS.bondDepo, "staking", "bonding"];

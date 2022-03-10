@@ -22,13 +22,13 @@ const func: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
         stakingDeployment.address,
         authorityDeployment.address,
     ];
-    const distributorDeployment = await deploy(CONTRACTS.distributor, {
+    const dep = await deploy(CONTRACTS.distributor, {
         from: deployer,
         args: constructorArguments,
         log: true,
         skipIfAlreadyDeployed: true,
     });
-    await verify(hre, distributorDeployment.address, constructorArguments);
+    if (dep.newlyDeployed) await verify(hre, dep.address, constructorArguments);
 };
 
 func.tags = [CONTRACTS.distributor, "staking"];

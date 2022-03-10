@@ -3,7 +3,7 @@ const { expect } = require("chai");
 const { smock } = require("@defi-wonderland/smock");
 
 describe("Bond Depository", async () => {
-    const LARGE_APPROVAL = "100000000000000000000000000000000";
+    const LARGE_APPROVAL = ethers.constants.MaxUint256;
     // Initial mint for Frax, OHM and DAI (10,000,000)
     const initialMint = "10000000000000000000000000";
     const initialDeposit = "1000000000000000000000000";

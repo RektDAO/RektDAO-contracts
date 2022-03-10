@@ -13,13 +13,13 @@ const func: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
     const { deployer } = await getNamedAccounts();
 
     const constructorArguments: any[] = [0];
-    const fraxDeployment = await deploy(CONTRACTS.FRAX, {
+    const dep = await deploy(CONTRACTS.FRAX, {
         from: deployer,
         args: constructorArguments,
         log: true,
         skipIfAlreadyDeployed: true,
     });
-    await verify(hre, fraxDeployment.address, constructorArguments);
+    if (dep.newlyDeployed) await verify(hre, dep.address, constructorArguments);
 };
 
 export default func;
