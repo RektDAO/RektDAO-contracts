@@ -97,23 +97,23 @@ const func: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
     let tuneInterval = depositInterval;
 
     // create bond: DAI
-    await bondDepo.create(
+    await waitFor(bondDepo.create(
         mockDai.address,
         [String(capacityPct * 10), String(initialPrice * 1), buffer],
         [capacityInQuote, fixedTerm],
         [vesting, conclusion],
         [depositInterval, tuneInterval]
-    );
+    ));
     console.log("Setup -- bond: DAI");
 
     // create bond: FRAX
-    await bondDepo.create(
+    await waitFor(bondDepo.create(
         mockFrax.address,
         [String(capacityPct * 10), String(initialPrice * 2), buffer],
         [capacityInQuote, fixedTerm],
         [vesting, conclusion],
         [depositInterval, tuneInterval]
-    );
+    ));
     console.log("Setup -- bond: FRAX");
     // END Create bonds
 
