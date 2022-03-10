@@ -95,7 +95,8 @@ export const TREASURY_TIMELOCK = IS_TESTNET ? 10 : BLOCKS_PER_DAY; // blocks
 // Constants
 // export const EPOCH_LENGTH_IN_BLOCKS = "1000"; // this is wrong, Epoch.length is actually in seconds
 export const FIRST_EPOCH_NUMBER = "1";
-export const FIRST_EPOCH_TIME = "1646330400"; // 1646330400 = Thu Mar 03 2022 12:00:00 GMT
+// https://www.unixtimestamp.com/
+export const FIRST_EPOCH_TIME = "1646892000"; // 1646892000 = Thu Mar 10 2022 00:00:00 GMT
 if (!IS_TESTNET && (Number(FIRST_EPOCH_TIME) < new Date().getTime())) {
     console.error("FIRST_EPOCH_TIME is in the past");
     process.exit(1);

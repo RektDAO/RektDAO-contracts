@@ -31,9 +31,9 @@ const func: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
     const bondDepo = OlympusBondDepositoryV2__factory.connect(bondDepoDeployment.address, signer);
 
     // https://faucet.avax-test.network/ -> https://traderjoexyz.com/trade
-    const reserveTokenAddress1 = "0xd00ae08403B9bbb9124bB305C09058E32C39A48c";
+    const reserveTokenAddress1 = "0xd00ae08403B9bbb9124bB305C09058E32C39A48c"; // wrapped native token: WAVAX
     // https://faucets.chain.link/fuji
-    const reserveTokenAddress2 = "0x0b9d5D9136855f6FEc3c0993feE6E9CE8a297846";
+    const reserveTokenAddress2 = "0x0b9d5D9136855f6FEc3c0993feE6E9CE8a297846"; // LINK
 
     // Treasury Actions
     await waitFor(treasury.enableMulti([2], [reserveTokenAddress1, reserveTokenAddress2])); // Enable as a reserve Token
@@ -48,11 +48,12 @@ const func: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
     const buffer = 2e5; // 2e5 = 200000 = 200%
     const priceOne = 1e9; // 1e9 = $1
     const priceEth = 2639.59; // price at launch time
-    const priceNative = 78.16; // price at launch time
     const priceEthPerK = priceEth / 1000;
-    const initialPrice1 = Math.floor(priceOne * priceNative / priceEthPerK);
+    const priceNumerator = priceOne * priceEthPerK;
+    const priceToken1 = 78.16; // price at launch time
+    const bondPrice1 = Math.floor(priceNumerator / priceToken1);
     const priceToken2 = 13.86; // price at launch time
-    const initialPrice2 = Math.floor(priceOne * priceToken2 / priceEthPerK);
+    const bondPrice2 = Math.floor(priceNumerator / priceToken2);
 
     // _booleans
     const capacityInQuote = false;
@@ -72,7 +73,7 @@ const func: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
     // create bond: reserveTokenAddress1
     await waitFor(bondDepo.create(
         reserveTokenAddress1,
-        [String(capacityPct * 50), String(initialPrice1), buffer],
+        [String(capacityPct * 50), String(bondPrice1), buffer],
         [capacityInQuote, fixedTerm],
         [vesting, conclusion],
         [depositInterval, tuneInterval]
@@ -82,7 +83,7 @@ const func: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
     // create bond: reserveTokenAddress2
     await waitFor(bondDepo.create(
         reserveTokenAddress2,
-        [String(capacityPct * 50), String(initialPrice2), buffer],
+        [String(capacityPct * 50), String(bondPrice2), buffer],
         [capacityInQuote, fixedTerm],
         [vesting, conclusion],
         [depositInterval, tuneInterval]
