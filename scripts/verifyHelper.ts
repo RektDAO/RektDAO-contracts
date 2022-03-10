@@ -12,6 +12,7 @@ export async function verify(hre: HardhatRuntimeEnvironment, address: string, co
             constructorArguments,
             contract,
         });
+        console.log("\n");
         return true;
     } catch (e) {
         console.error("verify failed:", address, constructorArguments, e);

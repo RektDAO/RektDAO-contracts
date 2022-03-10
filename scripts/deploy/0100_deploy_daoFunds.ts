@@ -14,6 +14,7 @@ import {
 // https://medium.com/gauntlet-networks/multisig-transactions-with-gnosis-safe-f5dbe67c1c2d
 
 const func: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
+    console.log("\n");
     const { deployments, getNamedAccounts, network, ethers } = hre;
     const { deploy } = deployments;
     const { deployer, daoMultisig } = await getNamedAccounts();
@@ -25,6 +26,8 @@ const func: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
     }
 
     const signer = await ethers.provider.getSigner(deployer);
+
+    const governorDeployment = await deployments.get(CONTRACTS.governor);
 
     let constructorArguments: any[] = [];
     const dep1 = await deploy(CONTRACTS.gnosisSafe, {
@@ -52,7 +55,7 @@ const func: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
 
     // https://github.com/gnosis/safe-contracts/blob/main/test/utils/setup.ts#L83
     const initializer = gnosisSafeSingleton.interface.encodeFunctionData("setup", [
-        [deployer],
+        [governorDeployment.address],
         1,
         ethers.constants.AddressZero,
         "0x",

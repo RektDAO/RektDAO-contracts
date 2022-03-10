@@ -70,23 +70,23 @@ const func: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
     const tuneInterval = depositInterval;
 
     // create bond: reserveTokenAddress1
-    await bondDepo.create(
+    await waitFor(bondDepo.create(
         reserveTokenAddress1,
         [String(capacityPct * 50), String(initialPrice1), buffer],
         [capacityInQuote, fixedTerm],
         [vesting, conclusion],
         [depositInterval, tuneInterval]
-    );
+    ));
     console.log("Setup -- bond: reserveTokenAddress1");
 
     // create bond: reserveTokenAddress2
-    await bondDepo.create(
+    await waitFor(bondDepo.create(
         reserveTokenAddress2,
         [String(capacityPct * 50), String(initialPrice2), buffer],
         [capacityInQuote, fixedTerm],
         [vesting, conclusion],
         [depositInterval, tuneInterval]
-    );
+    ));
     console.log("Setup -- bond: reserveTokenAddress2");
     // END Create bonds
 
