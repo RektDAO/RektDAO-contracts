@@ -132,6 +132,5 @@ func.dependencies = [
     CONTRACTS.treasury,
     CONTRACTS.bondDepo,
 ];
-func.runAtTheEnd = true;
 
 export default func;

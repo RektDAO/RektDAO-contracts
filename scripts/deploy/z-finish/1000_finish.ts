@@ -65,6 +65,5 @@ func.dependencies = [
     CONTRACTS.staking,
     CONTRACTS.bondDepo,
 ];
-func.runAtTheEnd = true;
 
 export default func;

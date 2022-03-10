@@ -90,7 +90,7 @@ export const BLOCK_RATE = SECONDS_PER_DAY / BLOCKS_PER_DAY; // seconds per block
 export const BLOCKS_PER_EPOCH = BLOCKS_PER_DAY / EPOCHS_PER_DAY;
 
 // Constructor Arguments
-export const TREASURY_TIMELOCK = IS_LOCAL ? 1 : BLOCKS_PER_DAY;
+export const TREASURY_TIMELOCK = IS_TESTNET ? 10 : BLOCKS_PER_DAY; // blocks
 
 // Constants
 // export const EPOCH_LENGTH_IN_BLOCKS = "1000"; // this is wrong, Epoch.length is actually in seconds
@@ -100,6 +100,7 @@ if (!IS_TESTNET && (Number(FIRST_EPOCH_TIME) < new Date().getTime())) {
     console.error("FIRST_EPOCH_TIME is in the past");
     process.exit(1);
 }
+export const BOND_VESTING = IS_TESTNET ? 10 : SECONDS_PER_DAY; // seconds
 export const INITIAL_REWARD_RATE = 10000; // in ten-thousandths ( 5000 = 0.5% ); rateDenominator = 1_000_000
 export const INITIAL_INDEX = "1" + "0".repeat(9); // 1000000000 = 1
 export const MOCK_MINT_INT = 7000;

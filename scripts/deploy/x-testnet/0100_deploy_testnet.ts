@@ -77,6 +77,5 @@ func.dependencies = [
     CONTRACTS.DAI,
     CONTRACTS.treasury,
 ];
-func.runAtTheEnd = true;
 
 export default func;

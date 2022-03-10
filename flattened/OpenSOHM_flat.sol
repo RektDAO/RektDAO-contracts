@@ -2,7 +2,7 @@
 
 // File @openzeppelin/contracts/utils/Address.sol@v4.5.0
 
-// SPDX-License-Identifier: MIT AND AGPL-3.0
+// SPDX-License-Identifier: MIT
 // OpenZeppelin Contracts (last updated v4.5.0) (utils/Address.sol)
 
 pragma solidity ^0.8.1;
@@ -228,6 +228,7 @@ library Address {
 
 // File @openzeppelin/contracts/utils/math/SafeMath.sol@v4.5.0
 
+// SPDX-License-Identifier: MIT
 // OpenZeppelin Contracts v4.4.1 (utils/math/SafeMath.sol)
 
 pragma solidity ^0.8.0;
@@ -458,6 +459,7 @@ library SafeMath {
 
 // File @openzeppelin/contracts/token/ERC20/extensions/draft-IERC20Permit.sol@v4.5.0
 
+// SPDX-License-Identifier: MIT
 // OpenZeppelin Contracts v4.4.1 (token/ERC20/extensions/draft-IERC20Permit.sol)
 
 pragma solidity ^0.8.0;
@@ -521,6 +523,7 @@ interface IERC20Permit {
 
 // File @openzeppelin/contracts/token/ERC20/IERC20.sol@v4.5.0
 
+// SPDX-License-Identifier: MIT
 // OpenZeppelin Contracts (last updated v4.5.0) (token/ERC20/IERC20.sol)
 
 pragma solidity ^0.8.0;
@@ -606,6 +609,7 @@ interface IERC20 {
 
 // File @openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol@v4.5.0
 
+// SPDX-License-Identifier: MIT
 // OpenZeppelin Contracts v4.4.1 (token/ERC20/extensions/IERC20Metadata.sol)
 
 pragma solidity ^0.8.0;
@@ -635,6 +639,7 @@ interface IERC20Metadata is IERC20 {
 
 // File @openzeppelin/contracts/utils/Context.sol@v4.5.0
 
+// SPDX-License-Identifier: MIT
 // OpenZeppelin Contracts v4.4.1 (utils/Context.sol)
 
 pragma solidity ^0.8.0;
@@ -662,6 +667,7 @@ abstract contract Context {
 
 // File @openzeppelin/contracts/token/ERC20/ERC20.sol@v4.5.0
 
+// SPDX-License-Identifier: MIT
 // OpenZeppelin Contracts (last updated v4.5.0) (token/ERC20/ERC20.sol)
 
 pragma solidity ^0.8.0;
@@ -1046,6 +1052,7 @@ contract ERC20 is Context, IERC20, IERC20Metadata {
 
 // File @openzeppelin/contracts/utils/Strings.sol@v4.5.0
 
+// SPDX-License-Identifier: MIT
 // OpenZeppelin Contracts v4.4.1 (utils/Strings.sol)
 
 pragma solidity ^0.8.0;
@@ -1116,6 +1123,7 @@ library Strings {
 
 // File @openzeppelin/contracts/utils/cryptography/ECDSA.sol@v4.5.0
 
+// SPDX-License-Identifier: MIT
 // OpenZeppelin Contracts (last updated v4.5.0) (utils/cryptography/ECDSA.sol)
 
 pragma solidity ^0.8.0;
@@ -1347,6 +1355,7 @@ library ECDSA {
 
 // File @openzeppelin/contracts/utils/cryptography/draft-EIP712.sol@v4.5.0
 
+// SPDX-License-Identifier: MIT
 // OpenZeppelin Contracts v4.4.1 (utils/cryptography/draft-EIP712.sol)
 
 pragma solidity ^0.8.0;
@@ -1452,6 +1461,7 @@ abstract contract EIP712 {
 
 // File @openzeppelin/contracts/utils/Counters.sol@v4.5.0
 
+// SPDX-License-Identifier: MIT
 // OpenZeppelin Contracts v4.4.1 (utils/Counters.sol)
 
 pragma solidity ^0.8.0;
@@ -1498,6 +1508,7 @@ library Counters {
 
 // File @openzeppelin/contracts/token/ERC20/extensions/draft-ERC20Permit.sol@v4.5.0
 
+// SPDX-License-Identifier: MIT
 // OpenZeppelin Contracts v4.4.1 (token/ERC20/extensions/draft-ERC20Permit.sol)
 
 pragma solidity ^0.8.0;
@@ -1586,6 +1597,7 @@ abstract contract ERC20Permit is ERC20, IERC20Permit, EIP712 {
 
 // File contracts/interfaces/IOpenGOHM.sol
 
+// SPDX-License-Identifier: AGPL-3.0
 pragma solidity >=0.7.5;
 
 interface IOpenGOHM is IERC20 {
@@ -1605,6 +1617,7 @@ interface IOpenGOHM is IERC20 {
 
 // File contracts/interfaces/IOpenSOHM.sol
 
+// SPDX-License-Identifier: AGPL-3.0
 pragma solidity >=0.7.5;
 
 interface IOpenSOHM is IERC20 {
@@ -1640,6 +1653,7 @@ interface IOpenSOHM is IERC20 {
 
 // File contracts/interfaces/IStaking.sol
 
+// SPDX-License-Identifier: AGPL-3.0
 pragma solidity >=0.7.5;
 
 interface IStaking {
@@ -1681,6 +1695,7 @@ interface IStaking {
 
 // File contracts/OpenSOHM.sol
 
+// SPDX-License-Identifier: AGPL-3.0
 pragma solidity ^0.8.4;
 
 
