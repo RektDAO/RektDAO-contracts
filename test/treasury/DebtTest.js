@@ -5,15 +5,19 @@ const { expect } = require("chai");
 const { utils } = require("ethers");
 const { advanceBlock } = require("../utils/advancement");
 
+function numExpStr(num, e) {
+    return String(num) + "0".repeat(e);
+}
+
 describe("Treasury", async () => {
-    const LARGE_APPROVAL = "100000000000000000000000000000000";
-    const ZERO_ADDRESS = "0x0000000000000000000000000000000000000000";
+    const LARGE_APPROVAL = ethers.constants.MaxUint256;
+    const ZERO_ADDRESS = ethers.constants.AddressZero;
     // Initial mint for Frax and DAI (10,000,000)
-    const initialMint = "10000000000000000000000000";
+    const initialMint = numExpStr(10000000, 18);
     // Reward rate of .1%
     const initialRewardRate = "1000";
     // Debt limit of 10
-    const debtLimit = "10000000000";
+    const debtLimit = numExpStr(10, 9);
 
     const mineBlock = async () => {
         await network.provider.request({
@@ -128,7 +132,7 @@ describe("Treasury", async () => {
 
         // Initialization for sOHM contract.
         // Set index to 10
-        await sOhm.setIndex("10000000000");
+        await sOhm.setIndex(numExpStr(10, 9));
         await sOhm.setgOHM(gOhm.address);
         await sOhm.initialize(staking.address, treasury.address);
 
@@ -151,13 +155,13 @@ describe("Treasury", async () => {
         // Deposit 10,000 DAI to treasury, 1,000 OHM gets minted to deployer with 9000 as excess reserves (ready to be minted)
         await treasury
             .connect(deployer)
-            .deposit("10000000000000000000000", dai.address, "9000000000000");
+            .deposit(numExpStr(10000, 18), dai.address, numExpStr(9000, 9));
 
         // Add staking as recipient of distributor with a test reward rate
         await distributor.addRecipient(staking.address, initialRewardRate);
 
         // Get sOHM in deployer wallet
-        const sohmAmount = "1000000000000";
+        const sohmAmount = numExpStr(1000, 9);
         await ohm.approve(staking.address, sohmAmount);
         await staking.stake(deployer.address, sohmAmount, true, true);
 
@@ -165,7 +169,7 @@ describe("Treasury", async () => {
         await sOhm.transfer(alice.address, debtLimit);
     });
 
-    it("should not have debt logged for alice", async () => {
+    it.only("should not have debt logged for alice", async () => {
         expect(await sOhm.debtBalances(alice.address)).to.equal(0);
     });
 
@@ -192,7 +196,7 @@ describe("Treasury", async () => {
     it("should allow alice to borrow", async () => {
         await treasury.enable(7, alice.address, ZERO_ADDRESS);
         await treasury.setDebtLimit(alice.address, debtLimit);
-        await treasury.connect(alice).incurDebt(1e9, dai.address);
+        await treasury.connect(alice).incurDebt(numExpStr(1, 9), dai.address);
         expect(await sOhm.debtBalances(alice.address)).to.equal(1);
     });
 
@@ -200,7 +204,7 @@ describe("Treasury", async () => {
         let staked = await sOhm.balanceOf(alice.address);
         await treasury.enable(7, alice.address, ZERO_ADDRESS);
         await treasury.setDebtLimit(alice.address, debtLimit);
-        await treasury.connect(alice).incurDebt(String(staked * 1000000000), dai.address);
+        await treasury.connect(alice).incurDebt(String(staked * 1e9), dai.address);
         expect(await sOhm.debtBalances(alice.address)).to.equal(staked);
     });
 
@@ -209,7 +213,7 @@ describe("Treasury", async () => {
         await treasury.enable(7, alice.address, ZERO_ADDRESS);
         await treasury.setDebtLimit(alice.address, debtLimit);
         await expect(
-            treasury.connect(alice).incurDebt(String(staked * 1000000000 + 1000000000), dai.address)
+            treasury.connect(alice).incurDebt(String(staked * 1e9 + 1e9), dai.address)
         ).to.be.revertedWith("");
     });
 
