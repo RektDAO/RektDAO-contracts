@@ -1,6 +1,6 @@
 import { HardhatRuntimeEnvironment } from "hardhat/types";
 import { DeployFunction } from "hardhat-deploy/types";
-import { CHAIN_ID, CONTRACTS, NetworkId } from "../../constants";
+import { BOND_VESTING, CHAIN_ID, CONTRACTS, NetworkId } from "../../constants";
 import {
     OpenOHM__factory,
     OpenSOHM__factory,
@@ -59,7 +59,7 @@ const func: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
     const fixedTerm = true;
 
     // _terms
-    const vesting = 10; // seconds
+    const vesting = BOND_VESTING;
     const timeToConclusion = 60 * 60 * 24 * 365; // 1 year = 31536000 seconds
     const conclusion = block.timestamp + timeToConclusion;
 
@@ -99,6 +99,5 @@ func.dependencies = [
     CONTRACTS.treasury,
     CONTRACTS.bondDepo,
 ];
-func.runAtTheEnd = true;
 
 export default func;

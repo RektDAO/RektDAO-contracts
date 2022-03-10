@@ -21,6 +21,7 @@ const func: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
 
     const daoFunds = SECONDARY_DEPLOYMENTS.daoFunds || daoMultisig;
 
+    // TODO: remove from .env
     console.log("\n\n// FOR FRONTEND: .env");
     console.log(`// ${NETWORK_ID_KEY} ADDRESSES`);
     console.log(`REACT_APP_${NETWORK_ID_KEY}_CONTRACT_OHM_V2=${ohmDeployment.address}`);
@@ -45,7 +46,7 @@ const func: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
     console.log(`GOHM_ADDRESS: "${gOhmDeployment.address}",`);
     console.log(`GOVERNOR_ADDRESS: "${governorDeployment.address}",`);
     console.log(`TREASURY_V2: "${treasuryDeployment.address}",`);
-    console.log(`MIGRATOR_ADDRESS="",`); // migratorDeployment.address
+    console.log(`MIGRATOR_ADDRESS: "",`); // migratorDeployment.address
     console.log(`BONDINGCALC_V2: "${bondingCalculatorDeployment.address}",`);
     console.log(`STAKING_V2: "${stakingDeployment.address}",`);
     console.log(`DISTRIBUTOR_ADDRESS: "${distributorDeployment.address}",`);
