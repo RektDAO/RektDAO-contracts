@@ -185,7 +185,7 @@ const config: HardhatUserConfig = {
         },
         daoMultisig: { // if unset for deployment chain, GnosisSafe will be deployed
             [chainIds.mainnet]: "",
-            [chainIds.avalancheFujiTestnet]: "0x36F52AE8fFEbf44bd4d10DcF39981Bb065892197",
+            // [chainIds.avalancheFujiTestnet]: "0x36F52AE8fFEbf44bd4d10DcF39981Bb065892197",
         },
         devFund: {
             default: "0x42069FdaC2d69e0F58A7AB5dC0cA9D5220B8BDF7",
