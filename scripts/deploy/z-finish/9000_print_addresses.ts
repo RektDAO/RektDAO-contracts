@@ -16,10 +16,10 @@ const func: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
     const stakingDeployment = await deployments.get(CONTRACTS.staking);
     const distributorDeployment = await deployments.get(CONTRACTS.distributor);
     const bondDepoDeployment = await deployments.get(CONTRACTS.bondDepo);
-    const daiDeployment = await deployments.get(CONTRACTS.DAI);
-    const fraxDeployment = await deployments.get(CONTRACTS.FRAX);
+    const daiDeployment = await deployments.getOrNull(CONTRACTS.DAI) || { address: "" };
+    const fraxDeployment = await deployments.getOrNull(CONTRACTS.FRAX) || { address: "" };
 
-    const daoFunds = SECONDARY_DEPLOYMENTS.daoFunds || daoMultisig;
+    const daoFundsAddress = SECONDARY_DEPLOYMENTS.daoFunds || daoMultisig;
 
     // TODO: remove from .env
     console.log("\n\n// FOR FRONTEND: .env");
@@ -34,9 +34,9 @@ const func: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
     console.log(`REACT_APP_${NETWORK_ID_KEY}_CONTRACT_STAKING_V2=${stakingDeployment.address}`);
     console.log(`REACT_APP_${NETWORK_ID_KEY}_CONTRACT_DISTRIBUTOR_ADDRESS=${distributorDeployment.address}`);
     console.log(`REACT_APP_${NETWORK_ID_KEY}_CONTRACT_BOND_DEPOSITORY=${bondDepoDeployment.address}`);
+    console.log(`REACT_APP_${NETWORK_ID_KEY}_CONTRACT_DAO_TREASURY=${daoFundsAddress}`);
     console.log(`REACT_APP_${NETWORK_ID_KEY}_CONTRACT_DAI_ADDRESS=${daiDeployment.address}`);
     console.log(`REACT_APP_${NETWORK_ID_KEY}_CONTRACT_FRAX_ADDRESS=${fraxDeployment.address}`);
-    console.log(`REACT_APP_${NETWORK_ID_KEY}_CONTRACT_DAO_TREASURY=${daoFunds}`);
     console.log(`// /${NETWORK_ID_KEY} ADDRESSES`);
 
     console.log("\n\n// FOR FRONTEND: networkDetails.ts");
@@ -51,9 +51,9 @@ const func: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
     console.log(`STAKING_V2: "${stakingDeployment.address}",`);
     console.log(`DISTRIBUTOR_ADDRESS: "${distributorDeployment.address}",`);
     console.log(`BOND_DEPOSITORY: "${bondDepoDeployment.address}",`);
+    console.log(`DAO_TREASURY: "${daoFundsAddress}",`);
     console.log(`DAI_ADDRESS: "${daiDeployment.address}",`);
     console.log(`FRAX_ADDRESS: "${fraxDeployment.address}",`);
-    console.log(`DAO_TREASURY: "${daoFunds}",`);
     console.log(`// /${NETWORK_ID_KEY} ADDRESSES`);
 };
 
@@ -69,8 +69,6 @@ func.dependencies = [
     CONTRACTS.staking,
     CONTRACTS.distributor,
     CONTRACTS.bondDepo,
-    CONTRACTS.DAI,
-    CONTRACTS.FRAX,
 ];
 func.runAtTheEnd = true;
 
