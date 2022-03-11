@@ -93,11 +93,12 @@ export const BLOCKS_PER_EPOCH = BLOCKS_PER_DAY / EPOCHS_PER_DAY;
 export const TREASURY_TIMELOCK = IS_TESTNET ? 10 : BLOCKS_PER_DAY; // blocks
 
 // Constants
+const CURRENT_TIMESTAMP = Math.round((new Date()).getTime() / 1000);
 // export const EPOCH_LENGTH_IN_BLOCKS = "1000"; // this is wrong, Epoch.length is actually in seconds
 export const FIRST_EPOCH_NUMBER = "1";
 // https://www.unixtimestamp.com/
-export const FIRST_EPOCH_TIME = "1646978400"; // 1646978400 = Fri Mar 11 2022 00:00:00 GMT
-if (!IS_TESTNET && (Number(FIRST_EPOCH_TIME) < new Date().getTime())) {
+export const FIRST_EPOCH_TIME = "1647021600"; // 1647021600 = Fri Mar 11 2022 12:00:00 GMT
+if (!IS_TESTNET && (Number(FIRST_EPOCH_TIME) < CURRENT_TIMESTAMP)) {
     console.error("FIRST_EPOCH_TIME is in the past");
     process.exit(1);
 }
