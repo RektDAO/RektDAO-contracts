@@ -42,7 +42,7 @@ const func: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
     const block = await ethers.provider.getBlock("latest");
 
     // _market
-    const capacityTotal = 10e18; // 1000e9 = 1000; 1e18 = 1 billion [1e9(e9)]
+    const capacityTotal = 1e18; // 1000e9 = 1000; 1e18 = 1 billion [1e9(e9)]
     console.log("total bonds capacity:", capacityTotal);
     const capacityPct = capacityTotal / 100;
     const buffer = 2e5; // 2e5 = 200000 = 200%
@@ -67,7 +67,7 @@ const func: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
     // _intervals
     const depositInterval = 60 * 60; // 1 hr
     // numIntervals = timeToConclusion / depositInterval = 8760
-    // maxPayout per depositInterval = capacity / numIntervals = 10e9 / 8760 = 1_141_552 / hr (total)
+    // maxPayout per depositInterval = capacity / numIntervals = 1e9 / 8760 = 114_155 / hr (total)
     const tuneInterval = depositInterval;
 
     // create bond: reserveTokenAddress1
@@ -94,7 +94,10 @@ const func: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
     console.log("END: deploy: avalancheFujiTestnet");
 };
 
-func.tags = ["avalancheFujiTestnet"];
+func.tags = [
+    "avalancheFujiTestnet",
+    "avalancheFujiTestnetP1",
+];
 func.dependencies = [
     CONTRACTS.ohm,
     CONTRACTS.treasury,

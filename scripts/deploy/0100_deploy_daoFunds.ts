@@ -29,7 +29,8 @@ const func: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
 
     const governorDeployment = await deployments.get(CONTRACTS.governor);
 
-    let constructorArguments: any[] = [];
+    let constructorArguments: any[];
+    constructorArguments = [];
     const dep1 = await deploy(CONTRACTS.gnosisSafe, {
         from: deployer,
         args: constructorArguments,
@@ -42,6 +43,7 @@ const func: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
     const gnosisSafeSingleton__factory = IS_MAINNET ? GnosisSafe__factory : GnosisSafeL2__factory;
     const gnosisSafeSingleton = gnosisSafeSingleton__factory.connect(dep1.address, signer);
 
+    constructorArguments = [];
     const dep2 = await deploy(CONTRACTS.gnosisSafeProxyFactory, {
         from: deployer,
         args: constructorArguments,

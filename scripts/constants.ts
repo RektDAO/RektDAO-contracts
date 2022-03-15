@@ -1,4 +1,5 @@
 import hre from "hardhat";
+import { Address } from "hardhat-deploy/types";
 
 export enum NetworkId {
     LOCAL = 1337,
@@ -23,6 +24,7 @@ export const CHAIN_ID = Number(hre.network.config.chainId);
 console.log("chainId", CHAIN_ID);
 export const NETWORK_ID_KEY = NetworkId[CHAIN_ID]; // i.e. "MAINNET"
 export const IS_MAINNET = (CHAIN_ID == NetworkId.MAINNET);
+export const IS_LOCAL = (CHAIN_ID == NetworkId.LOCAL);
 export const IS_TESTNET = [
     NetworkId.LOCAL,
     NetworkId.TESTNET_RINKEBY,
@@ -31,7 +33,6 @@ export const IS_TESTNET = [
     NetworkId.FANTOM_TESTNET,
     NetworkId.POLYGON_TESTNET,
 ].includes(CHAIN_ID);
-export const IS_LOCAL = (CHAIN_ID == NetworkId.LOCAL);
 
 export const CONTRACTS: Record<string, string> = {
     ohm: "OpenOHM",
@@ -112,3 +113,11 @@ export const BOUNTY_AMOUNT = "1" + "0".repeat(9-1); // .1 OHM // now done in con
 export const EREKT_MINT_INT = 1000000 * 2; // 1000000 to devFund, 1000000 as "treasury profit" for distributor seeding
 export const EREKT_MINT = String(EREKT_MINT_INT) + "0".repeat(18); // initial deposit
 export const EREKT_MINT_PROFIT = String(EREKT_MINT_INT * .5) + "0".repeat(9); // % of initial deposit = profit
+
+export interface BondInit {
+    name: string;
+    address: Address;
+    price: number;
+    pct: number;
+    isLP: boolean;
+}
