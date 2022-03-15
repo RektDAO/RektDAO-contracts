@@ -1,6 +1,6 @@
 import { HardhatRuntimeEnvironment } from "hardhat/types";
 import { DeployFunction } from "hardhat-deploy/types";
-import { CONTRACTS, MOCK_MINT, MOCK_MINT_PROFIT, IS_TESTNET } from "../../constants";
+import { BOND_VESTING, CONTRACTS, MOCK_MINT, MOCK_MINT_PROFIT, IS_TESTNET } from "../../constants";
 import {
     OpenOHM__factory,
     OpenSOHM__factory,
@@ -75,26 +75,26 @@ const func: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
     const block = await ethers.provider.getBlock("latest");
 
     // _market
-    let capacityTotal = 100e18; // 1000e9 = 1000; 1e18 = 1 billion [1e9(e9)]
+    const capacityTotal = 1e18; // 1000e9 = 1000; 1e18 = 1 billion [1e9(e9)]
     console.log("total bonds capacity:", capacityTotal);
-    let capacityPct = capacityTotal / 100;
-    let initialPrice = 1e9; // 1e9 = $1
-    let buffer = 2e5; // 2e5 = 200000 = 200%
+    const capacityPct = capacityTotal / 100;
+    const initialPrice = 1e9; // 1e9 = $1
+    const buffer = 2e5; // 2e5 = 200000 = 200%
 
     // _booleans
-    let capacityInQuote = false;
-    let fixedTerm = true;
+    const capacityInQuote = false;
+    const fixedTerm = true;
 
     // _terms
-    let vesting = 10;
-    let timeToConclusion = 60 * 60 * 24 * 365; // 1 year = 31536000 seconds
-    let conclusion = block.timestamp + timeToConclusion;
+    const vesting = BOND_VESTING;
+    const timeToConclusion = 60 * 60 * 24 * 365; // 1 year = 31536000 seconds
+    const conclusion = block.timestamp + timeToConclusion;
 
     // _intervals
-    let depositInterval = 60 * 60; // 1 hr
+    const depositInterval = 60 * 60; // 1 hr
     // numIntervals = timeToConclusion / depositInterval = 8760
     // maxPayout per depositInterval = capacity / numIntervals = 100e9 / 8760 = 11_415_525 / hr (total)
-    let tuneInterval = depositInterval;
+    const tuneInterval = depositInterval;
 
     // create bond: DAI
     await waitFor(bondDepo.create(
